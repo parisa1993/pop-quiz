@@ -1,0 +1,139 @@
+<main class="host page">
+  <header class="host__bar">
+    <a routerLink="/admin/quizzes" class="host__back">← Quizzes</a>
+    @if (state(); as s) {
+      <h1 class="host__title">{{ s.quizTitle }}</h1>
+    }
+    <span class="chip" [class.chip--off]="!connected()">{{ connected() ? '🟢 Live' : '🟠 Reconnecting…' }}</span>
+  </header>
+
+  @if (state(); as s) {
+    @switch (s.status) {
+      @case ('LOBBY') {
+        <section class="lobby">
+          <div class="glass lobby__join">
+            <p class="on-dark-muted">Players, grab your phone and open</p>
+            <p class="lobby__url">{{ joinUrl }}</p>
+            <p class="on-dark-muted">Pick a name, then tap <b>{{ s.quizTitle }}</b></p>
+          </div>
+          <div class="lobby__count">
+            <span class="lobby__num">{{ s.players.length }}</span>
+            <span>player{{ s.players.length === 1 ? '' : 's' }} joined</span>
+          </div>
+          <ul class="lobby__players">
+            @for (p of s.players; track p.id) {
+              <li class="chip pop-in" [class.chip--off]="!p.connected">{{ p.username }}</li>
+            } @empty {
+              <li class="on-dark-muted">Waiting for the first player… 🎈</li>
+            }
+          </ul>
+          <button type="button" class="btn btn--yellow btn--lg lobby__start" [disabled]="busy() || s.players.length === 0" (click)="act('start')">
+            🚀 Start the game
+          </button>
+          @if (s.players.length === 0) {
+            <p class="on-dark-muted">The start button unlocks once someone joins.</p>
+          }
+        </section>
+      }
+
+      @case ('IN_PROGRESS') {
+        @if (s.question; as q) {
+          <section class="live">
+            <div class="live__main">
+              <div class="row row--between">
+                <span class="chip">Question {{ s.currentIndex + 1 }} / {{ s.totalQuestions }}</span>
+                <span class="chip">{{ info[q.type].icon }} {{ info[q.type].label }}</span>
+              </div>
+              <div class="card live__question pop-in" [attr.data-q]="q.id">
+                <h2 class="live__text">{{ q.text }}</h2>
+                @if (q.imageUrl) {
+                  <img class="live__img" [src]="q.imageUrl" alt="Question picture" />
+                }
+                <div class="bars" aria-label="Answers so far">
+                  @for (b of s.distribution; track b.key; let i = $index) {
+                    <div class="bar" [class.bar--correct]="s.revealed && b.correct" [class.bar--dim]="s.revealed && !b.correct && q.type !== 'POLL'">
+                      <span class="bar__label">
+                        @if (b.imageUrl) {
+                          <img [src]="b.imageUrl" alt="" class="bar__thumb" />
+                        }
+                        <span class="shape" [style.background]="style(i).color" aria-hidden="true">{{ style(i).shape }}</span>
+                        {{ b.label }}
+                        @if (s.revealed && b.correct) { ✅ }
+                      </span>
+                      <span class="bar__track">
+                        <span class="bar__fill" [style.width.%]="(b.count / maxBucket()) * 100" [style.background]="style(i).color"></span>
+                      </span>
+                      <span class="bar__count">{{ b.count }}</span>
+                    </div>
+                  }
+                </div>
+                @if (s.revealed) {
+                  <p class="answer pop-in">Answer: <b>{{ s.correctAnswerText }}</b></p>
+                } @else {
+                  <p class="muted answer-hidden">🔒 Answer: {{ s.correctAnswerText }} (only you can see this)</p>
+                }
+              </div>
+            </div>
+
+            <aside class="live__side">
+              <div class="glass side-card">
+                <h3>{{ s.answeredCount }} / {{ s.players.length }} answered</h3>
+                <ul class="players">
+                  @for (p of s.players; track p.id) {
+                    <li [class.is-off]="!p.connected">
+                      <span>{{ p.answeredCurrent ? '✅' : '⏳' }}</span>
+                      <span class="players__name">{{ p.username }}</span>
+                      <span class="players__score">{{ p.score }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </aside>
+          </section>
+
+          <nav class="controls" aria-label="Host controls">
+            <button type="button" class="btn btn--white" [disabled]="busy() || s.currentIndex === 0" (click)="act('prev')">← Back</button>
+            @if (!s.revealed) {
+              <button type="button" class="btn btn--teal btn--lg" [disabled]="busy()" (click)="act('reveal')">👀 Reveal answer</button>
+            }
+            @if (isLast()) {
+              <app-confirm-button buttonClass="btn btn--pink btn--lg" question="End the game?" yesLabel="Finish 🏁" (confirmed)="act('finish')">
+                🏁 Finish &amp; show winners
+              </app-confirm-button>
+            } @else {
+              <button type="button" class="btn btn--yellow btn--lg" [disabled]="busy()" (click)="act('next')">Next →</button>
+            }
+          </nav>
+          @if (!isLast()) {
+            <div class="end-early">
+              <app-confirm-button buttonClass="link-btn" question="End the game now?" yesLabel="Finish" (confirmed)="act('finish')">End game early</app-confirm-button>
+            </div>
+          }
+        }
+      }
+
+      @case ('FINISHED') {
+        <section class="finished pop-in">
+          <h2 class="title-display">🏆 Winners!</h2>
+          <app-podium [players]="s.leaderboard.slice(0, 3)" />
+          <ol class="board card">
+            @for (p of s.leaderboard; track p.playerId) {
+              <li>
+                <span class="board__rank">{{ rankLabel(p.rank) }}</span>
+                <span class="board__name">{{ p.username }}</span>
+                <span class="muted">{{ p.correctCount }} correct</span>
+                <b>{{ p.score }} pts</b>
+              </li>
+            }
+          </ol>
+          <div class="row finished__actions">
+            <a class="btn btn--white" [routerLink]="['/admin/quizzes', s.quizId, 'results']" [queryParams]="{ session: s.sessionId }">See full results</a>
+            <a class="btn btn--ghost" routerLink="/admin/quizzes">Back to quizzes</a>
+          </div>
+        </section>
+      }
+    }
+  } @else {
+    <div class="spinner" aria-label="Loading game"></div>
+  }
+</main>

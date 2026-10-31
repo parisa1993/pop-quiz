@@ -1,0 +1,68 @@
+<main class="page">
+  <div class="head row row--between">
+    <div>
+      <h1 class="head__title">Your quizzes</h1>
+      <p class="on-dark-muted">Only <b>enabled</b> quizzes show up for players.</p>
+    </div>
+    <a routerLink="/admin/quizzes/new" class="btn btn--yellow btn--lg">＋ New quiz</a>
+  </div>
+
+  @if (quizzes(); as list) {
+    <div class="grid">
+      @for (quiz of list; track quiz.id) {
+        <article class="quiz card pop-in">
+          <div class="quiz__cover" [style.background-image]="quiz.coverImageUrl ? 'url(' + quiz.coverImageUrl + ')' : null">
+            @if (quiz.activeSession; as active) {
+              <span class="badge quiz__live" [class.badge--live]="active.status === 'IN_PROGRESS'" [class.badge--lobby]="active.status === 'LOBBY'">
+                {{ active.status === 'IN_PROGRESS' ? 'Live' : 'Lobby' }} · {{ active.playerCount }} 👥
+              </span>
+            }
+          </div>
+          <div class="quiz__body">
+            <div class="row row--between">
+              <h2 class="quiz__title">{{ quiz.title }}</h2>
+              <label class="switch" [attr.aria-label]="(quiz.enabled ? 'Disable ' : 'Enable ') + quiz.title">
+                <input type="checkbox" [checked]="quiz.enabled" [disabled]="busyId() === quiz.id" (change)="toggle(quiz)" />
+                <span class="switch__track"></span>
+                <span class="quiz__state">{{ quiz.enabled ? 'On' : 'Off' }}</span>
+              </label>
+            </div>
+            @if (quiz.description) {
+              <p class="muted quiz__desc">{{ quiz.description }}</p>
+            }
+            <div class="row quiz__stats">
+              <span class="stat">❓ {{ quiz.questionCount }} questions</span>
+              <span class="stat">👥 {{ quiz.playerCount }} played</span>
+              <span class="stat">🎮 {{ quiz.sessionCount }} games</span>
+            </div>
+            <div class="row quiz__actions">
+              <button type="button" class="btn btn--pink" [disabled]="quiz.questionCount === 0 || busyId() === quiz.id" (click)="host(quiz)">
+                ▶ {{ quiz.activeSession ? 'Open host screen' : 'Host game' }}
+              </button>
+              <a [routerLink]="['/admin/quizzes', quiz.id]" class="btn btn--soft">✏️ Edit</a>
+              <a [routerLink]="['/admin/quizzes', quiz.id, 'results']" class="btn btn--soft" [class.is-disabled]="quiz.sessionCount === 0">🏆 Results</a>
+              <app-confirm-button
+                class="quiz__delete"
+                buttonClass="icon-btn"
+                [question]="'Delete ' + quiz.title + '?'"
+                yesLabel="Delete"
+                (confirmed)="remove(quiz)"
+              >
+                <span aria-hidden="true">🗑️</span><span class="visually-hidden">Delete {{ quiz.title }}</span>
+              </app-confirm-button>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <div class="glass empty full">
+          <span class="empty__emoji" aria-hidden="true">🎁</span>
+          <h2>No quizzes yet</h2>
+          <p class="on-dark-muted">Create your first birthday quiz. It only takes a minute!</p>
+          <a routerLink="/admin/quizzes/new" class="btn btn--yellow btn--lg">＋ Create a quiz</a>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="spinner" aria-label="Loading quizzes"></div>
+  }
+</main>

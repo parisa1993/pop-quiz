@@ -1,0 +1,168 @@
+.back {
+  display: inline-block;
+  margin: var(--space-2) 0 var(--space-4);
+  font-weight: 700;
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.details__title {
+  margin: 0;
+}
+
+.details__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.details__actions {
+  margin-top: var(--space-2);
+}
+
+.banner {
+  margin: var(--space-5) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-m);
+  background: var(--c-pink);
+  font-weight: 800;
+}
+
+.questions {
+  margin-top: var(--space-6);
+}
+
+.questions__head h2 {
+  margin: 0;
+}
+
+.qlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.qitem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.qitem__num {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--c-primary);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.qitem__main {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-s);
+
+  &:hover:not(:disabled) {
+    background: var(--c-surface-2);
+  }
+}
+
+.qitem__type {
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  color: var(--c-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.qitem__text {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qitem__thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-s);
+  object-fit: cover;
+  flex: none;
+}
+
+.qitem__actions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+@media (max-width: 600px) {
+  .qitem {
+    flex-wrap: wrap;
+  }
+
+  .qitem__main {
+    flex-basis: calc(100% - 100px);
+  }
+
+  .qitem__thumb {
+    display: none;
+  }
+
+  .qitem__actions {
+    margin-left: auto;
+  }
+}
+
+// Side panel on desktop, full-screen sheet on phones.
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(16, 6, 40, 0.55);
+  cursor: pointer;
+}
+
+.sheet__panel {
+  position: relative;
+  width: min(100%, 720px);
+  height: 100%;
+  overflow-y: auto;
+  border-radius: var(--radius-l) 0 0 var(--radius-l);
+  padding-top: calc(var(--space-5) + var(--safe-top));
+  padding-bottom: calc(var(--space-6) + var(--safe-bottom));
+}
+
+.sheet__head h2 {
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .sheet__panel {
+    border-radius: 0;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}

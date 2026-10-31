@@ -1,0 +1,137 @@
+<form class="editor" (submit)="$event.preventDefault(); save()">
+  <fieldset class="types">
+    <legend class="editor__label">Question type</legend>
+    <div class="types__grid">
+      @for (type of types; track type) {
+        <button
+          type="button"
+          class="type"
+          [class.is-active]="draft().type === type"
+          [attr.aria-pressed]="draft().type === type"
+          (click)="changeType(type)"
+        >
+          <span class="type__icon" aria-hidden="true">{{ info[type].icon }}</span>
+          <span class="type__label">{{ info[type].label }}</span>
+          <span class="type__hint">{{ info[type].hint }}</span>
+        </button>
+      }
+    </div>
+  </fieldset>
+
+  <label class="field">
+    <span>Question</span>
+    <textarea
+      class="input"
+      rows="2"
+      maxlength="500"
+      placeholder="e.g. Where did we go on our first trip together?"
+      [value]="draft().text"
+      (input)="patch({ text: $any($event.target).value })"
+    ></textarea>
+  </label>
+
+  <div class="editor__media">
+    <div class="field">
+      <span>Picture (optional)</span>
+      <app-image-upload [url]="draft().imageUrl" label="Add a picture to the question" (changed)="patch({ imageUrl: $event })" />
+    </div>
+    @if (draft().type !== 'POLL') {
+      <div class="field">
+        <span>Points for a correct answer</span>
+        <input
+          class="input"
+          type="number"
+          min="0"
+          max="10000"
+          step="10"
+          inputmode="numeric"
+          [value]="draft().points"
+          (input)="patch({ points: $any($event.target).valueAsNumber })"
+        />
+        <div class="row presets">
+          @for (p of pointPresets; track p) {
+            <button type="button" class="chip chip--light" [class.is-active]="draft().points === p" (click)="patch({ points: p })">{{ p }}</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <section class="answers">
+    <h3 class="editor__label">Answers</h3>
+    @if (isChoice()) {
+      <app-choice-options-editor
+        [options]="options()"
+        [correctIds]="correctIds()"
+        [mode]="correctMode()"
+        [images]="draft().type === 'IMAGE_CHOICE'"
+        (changed)="onChoices($event)"
+      />
+    } @else {
+      @switch (draft().type) {
+        @case ('TRUE_FALSE') {
+          <p class="hint">Is the statement true or false?</p>
+          <div class="tf">
+            <button type="button" class="tf__btn tf__btn--true" [class.is-active]="trueFalse()" (click)="patchConfig({ correct: true })">
+              ✔ True
+            </button>
+            <button type="button" class="tf__btn tf__btn--false" [class.is-active]="!trueFalse()" (click)="patchConfig({ correct: false })">
+              ✘ False
+            </button>
+          </div>
+        }
+        @case ('TYPE_ANSWER') {
+          <p class="hint">Players type their answer. Capitals, accents and punctuation don't matter. Add spelling variants too!</p>
+          <app-text-list-editor
+            [items]="accepted()"
+            placeholder="Accepted answer"
+            addLabel="Add another accepted answer"
+            [max]="10"
+            (changed)="onAccepted($event)"
+          />
+        }
+        @case ('ORDERING') {
+          <p class="hint">Enter the items in the <b>correct</b> order. Players get them shuffled.</p>
+          <app-text-list-editor
+            [items]="orderItems()"
+            placeholder="Item"
+            addLabel="Add item"
+            [min]="minItems"
+            [max]="maxItems"
+            [draggable]="true"
+            (changed)="patchConfig({ items: $event })"
+          />
+        }
+        @case ('NUMBER_GUESS') {
+          <div class="number">
+            <label class="field">
+              <span>Correct number</span>
+              <input class="input" type="number" step="any" inputmode="decimal" [value]="numberConfig().correct" (input)="onNumber('correct', $any($event.target).value)" />
+            </label>
+            <label class="field">
+              <span>Accept ± (tolerance)</span>
+              <input class="input" type="number" min="0" step="any" inputmode="decimal" [value]="numberConfig().tolerance" (input)="onNumber('tolerance', $any($event.target).value)" />
+            </label>
+            <label class="field">
+              <span>Unit (optional)</span>
+              <input class="input" maxlength="20" placeholder="years, cm, €…" [value]="numberConfig().unit ?? ''" (input)="patchConfig({ unit: $any($event.target).value || null })" />
+            </label>
+          </div>
+        }
+      }
+    }
+  </section>
+
+  @if (showErrors() && errors().length) {
+    <ul class="errors" role="alert">
+      @for (e of errors(); track e) {
+        <li>• {{ e }}</li>
+      }
+    </ul>
+  }
+
+  <div class="editor__actions">
+    <button type="button" class="btn btn--soft" (click)="cancelled.emit()">Cancel</button>
+    <button class="btn btn--teal btn--lg" [disabled]="saving()">{{ saving() ? 'Saving…' : question() ? 'Save changes' : 'Add question' }}</button>
+  </div>
+</form>

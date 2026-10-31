@@ -1,0 +1,73 @@
+// Design tokens: every component uses these instead of hard-coded values.
+:root {
+  // Party-night backdrop
+  --c-bg-1: #22094f;
+  --c-bg-2: #4b1585;
+  --c-bg-3: #a8206b;
+
+  // Surfaces & text
+  --c-surface: #ffffff;
+  --c-surface-2: #f6f1ff;
+  --c-surface-3: #ece4ff;
+  --c-ink: #1d1436;
+  --c-ink-soft: #625a7d;
+  --c-ink-on-dark: #ffffff;
+  --c-ink-on-dark-soft: rgba(255, 255, 255, 0.78);
+  --c-line: #e4dcf5;
+
+  // Brand & feedback
+  --c-primary: #7048ff;
+  --c-primary-dark: #5530e0;
+  --c-pink: #ff4f8b;
+  --c-yellow: #ffc93c;
+  --c-teal: #13b394;
+  --c-orange: #ff8a3d;
+  --c-blue: #3d7bff;
+  --c-success: #13b394;
+  --c-danger: #e5484d;
+  --c-warning: #ffb020;
+
+  // Answer tiles (Kahoot-style colours + shapes)
+  --c-answer-1: #ff4f8b;
+  --c-answer-2: #3d7bff;
+  --c-answer-3: #f5a700;
+  --c-answer-4: #13b394;
+  --c-answer-5: #ff7a2f;
+  --c-answer-6: #8b5cf6;
+
+  // Type
+  --font-display: 'Fredoka', 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fs-xs: 0.8rem;
+  --fs-s: 0.9rem;
+  --fs-m: 1rem;
+  --fs-l: 1.2rem;
+  --fs-xl: clamp(1.4rem, 1.1rem + 1.4vw, 1.9rem);
+  --fs-xxl: clamp(1.9rem, 1.3rem + 3vw, 3rem);
+  --fs-hero: clamp(2.6rem, 1.6rem + 5vw, 4.6rem);
+
+  // Shape
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --radius-s: 10px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+  --radius-pill: 999px;
+  --shadow-s: 0 2px 6px rgba(29, 20, 54, 0.12);
+  --shadow-m: 0 10px 30px rgba(29, 20, 54, 0.18);
+  --shadow-l: 0 24px 60px rgba(12, 4, 40, 0.35);
+  --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.18);
+
+  --tap: 48px;
+  --page-max: 1100px;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur: 220ms;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

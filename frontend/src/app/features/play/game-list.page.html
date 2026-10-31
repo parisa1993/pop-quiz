@@ -1,0 +1,61 @@
+<main class="page page--narrow">
+  <header class="list-head">
+    <div>
+      <p class="on-dark-muted list-head__hi">Hi there 👋</p>
+      <h1 class="list-head__name">{{ players.player()?.username }}</h1>
+    </div>
+    <button type="button" class="btn btn--ghost list-head__change" (click)="changeName()">Change name</button>
+  </header>
+
+  <h2 class="list-title">Pick a game</h2>
+
+  @if (games(); as list) {
+    @for (game of list; track game.quizId) {
+      <button
+        type="button"
+        class="game card pop-in"
+        [disabled]="joining() !== null"
+        (click)="join(game)"
+        [attr.aria-label]="'Join ' + game.title"
+      >
+        <div class="game__cover" [style.background-image]="game.coverImageUrl ? 'url(' + game.coverImageUrl + ')' : null">
+          @if (!game.coverImageUrl) {
+            <span aria-hidden="true">🎁</span>
+          }
+        </div>
+        <div class="game__body">
+          <div class="row">
+            @switch (game.session?.status) {
+              @case ('IN_PROGRESS') {
+                <span class="badge badge--live">Live now</span>
+              }
+              @case ('LOBBY') {
+                <span class="badge badge--lobby">Lobby open</span>
+              }
+              @default {
+                <span class="badge">Ready</span>
+              }
+            }
+            @if (game.session; as session) {
+              <span class="stat">👥 {{ session.playerCount }}</span>
+            }
+          </div>
+          <h3 class="game__title">{{ game.title }}</h3>
+          @if (game.description) {
+            <p class="muted game__desc">{{ game.description }}</p>
+          }
+          <span class="stat">❓ {{ game.questionCount }} questions</span>
+        </div>
+        <span class="game__go" aria-hidden="true">{{ joining() === game.quizId ? '⏳' : '→' }}</span>
+      </button>
+    } @empty {
+      <div class="glass empty">
+        <span class="empty__emoji" aria-hidden="true">🎂</span>
+        <h3>No games ready yet</h3>
+        <p class="on-dark-muted">Hang tight! This list updates by itself as soon as the host opens a game.</p>
+      </div>
+    }
+  } @else {
+    <div class="spinner" aria-label="Loading games"></div>
+  }
+</main>

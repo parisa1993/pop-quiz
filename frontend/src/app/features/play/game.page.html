@@ -1,0 +1,110 @@
+<main class="game page page--narrow">
+  @if (!connected()) {
+    <p class="offline" role="status">📡 Reconnecting…</p>
+  }
+
+  @if (state(); as s) {
+    <header class="topbar">
+      <div class="topbar__title">
+        <span class="on-dark-muted">{{ me()?.username }}</span>
+        <strong>{{ s.quizTitle }}</strong>
+      </div>
+      @if (s.status === 'IN_PROGRESS') {
+        <span class="chip" aria-label="Your score">⭐ {{ s.myScore }}</span>
+      }
+    </header>
+
+    @switch (s.status) {
+      @case ('LOBBY') {
+        <section class="lobby glass pop-in">
+          <span class="lobby__cake" aria-hidden="true">🎂</span>
+          <h1>You're in, {{ me()?.username }}!</h1>
+          <p class="on-dark-muted">Waiting for the host to start the game… Keep this screen open.</p>
+          <div class="lobby__dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <h2 class="lobby__count">{{ s.players.length }} player{{ s.players.length === 1 ? '' : 's' }} here</h2>
+          <ul class="lobby__players">
+            @for (p of s.players; track p.id) {
+              <li class="chip pop-in" [class.is-me]="p.id === me()?.id">{{ p.username }}</li>
+            }
+          </ul>
+        </section>
+        <button type="button" class="link-btn leave" (click)="backToGames()">Leave this game</button>
+      }
+
+      @case ('IN_PROGRESS') {
+        @if (s.question; as q) {
+          <div class="progress" role="progressbar" [attr.aria-valuenow]="s.currentIndex + 1" aria-valuemin="1" [attr.aria-valuemax]="s.totalQuestions">
+            <span class="progress__label">Question {{ s.currentIndex + 1 }} / {{ s.totalQuestions }}</span>
+            <span class="progress__bar"><span [style.width.%]="progress()"></span></span>
+          </div>
+
+          <section class="question card pop-in" [attr.data-q]="q.id">
+            <div class="row row--between">
+              <span class="badge">{{ q.type === 'POLL' ? 'Poll' : q.points + ' pts' }}</span>
+            </div>
+            <h1 class="question__text">{{ q.text }}</h1>
+            @if (q.imageUrl) {
+              <img class="question__img" [src]="q.imageUrl" alt="Question picture" />
+            }
+
+            @if (s.revealed) {
+              <div class="result pop-in" [class.result--good]="s.myResult?.isCorrect" [class.result--bad]="s.myAnswer && !s.myResult?.isCorrect && q.type !== 'POLL'">
+                @if (q.type === 'POLL') {
+                  <strong>📊 Thanks for voting!</strong>
+                } @else if (!s.myAnswer) {
+                  <strong>⏰ You didn't answer this one</strong>
+                } @else if (s.myResult?.isCorrect) {
+                  <strong>🎉 Correct! +{{ s.myResult.points }} pts</strong>
+                } @else {
+                  <strong>😅 Not quite!</strong>
+                }
+                @if (q.type !== 'POLL') {
+                  <span>Answer: <b>{{ s.correctAnswerText }}</b></span>
+                }
+              </div>
+            }
+
+            <div class="question__answers">
+              @switch (answerKind()) {
+                @case ('ordering') {
+                  <app-ordering-answer [question]="q" [answer]="s.myAnswer" [locked]="!!s.myAnswer || s.revealed || sending()" (submitted)="submit($event)" />
+                }
+                @case ('free') {
+                  <app-free-answer [question]="q" [answer]="s.myAnswer" [locked]="!!s.myAnswer || s.revealed || sending()" (submitted)="submit($event)" />
+                }
+                @default {
+                  <app-choice-answer [question]="q" [answer]="s.myAnswer" [locked]="!!s.myAnswer || s.revealed || sending()" (submitted)="submit($event)" />
+                }
+              }
+            </div>
+
+            @if (s.myAnswer && !s.revealed) {
+              <p class="locked pop-in">✨ Answer locked in! Waiting for the host…</p>
+            }
+          </section>
+        }
+      }
+
+      @case ('FINISHED') {
+        <section class="final pop-in">
+          @if (s.final; as f) {
+            <p class="on-dark-muted">That's a wrap!</p>
+            <div class="final__rank">{{ rankLabel(f.rank) }}</div>
+            <h1>
+              @if (f.rank === 1) { You won! 🏆 } @else { You finished #{{ f.rank }} of {{ f.playerCount }} }
+            </h1>
+            <p class="final__score">{{ f.score }} points</p>
+            <app-podium [players]="f.podium" [highlightId]="me()?.id ?? null" />
+          } @else {
+            <h1>Game over 🎉</h1>
+          }
+          <button type="button" class="btn btn--white btn--lg btn--block final__back" (click)="backToGames()">Back to games</button>
+        </section>
+      }
+    }
+  } @else {
+    <div class="center-screen">
+      <div class="spinner" aria-label="Joining game"></div>
+    </div>
+  }
+</main>

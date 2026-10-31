@@ -1,0 +1,95 @@
+<main class="page">
+  <a routerLink="/admin/quizzes" class="back">← All quizzes</a>
+
+  @if (sessions(); as list) {
+    @if (list.length === 0) {
+      <div class="glass empty">
+        <span class="empty__emoji" aria-hidden="true">🏁</span>
+        <h1>No games played yet</h1>
+        <p class="on-dark-muted">Host this quiz and the results will show up here.</p>
+      </div>
+    } @else {
+      <h1 class="title">{{ results()?.session?.quizTitle ?? 'Results' }}</h1>
+
+      <div class="sessions" role="tablist" aria-label="Games">
+        @for (s of list; track s.id; let i = $index) {
+          <button type="button" role="tab" class="session" [class.is-active]="s.id === selectedId()" [attr.aria-selected]="s.id === selectedId()" (click)="select(s.id)">
+            <b>Game {{ list.length - i }}</b>
+            <span>{{ (s.startedAt ?? s.createdAt) | date: 'MMM d, HH:mm' }}</span>
+            <span class="badge" [class.badge--live]="s.status === 'IN_PROGRESS'">{{ statusLabel[s.status] }} · {{ s.playerCount }} 👥</span>
+          </button>
+        }
+      </div>
+
+      @if (results(); as r) {
+        @if (r.leaderboard.length) {
+          <section class="winners glass pop-in">
+            <app-podium [players]="r.leaderboard.slice(0, 3)" />
+          </section>
+        }
+
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" class="tab" [class.is-active]="tab() === 'players'" (click)="tab.set('players')">👥 Players</button>
+          <button type="button" role="tab" class="tab" [class.is-active]="tab() === 'questions'" (click)="tab.set('questions')">❓ Questions</button>
+        </div>
+
+        @if (tab() === 'players') {
+          <ol class="board card">
+            @for (p of r.leaderboard; track p.playerId) {
+              <li class="board__row">
+                <button type="button" class="board__head" (click)="toggle(p.playerId)" [attr.aria-expanded]="expanded() === p.playerId">
+                  <span class="board__rank">{{ rankLabel(p.rank) }}</span>
+                  <span class="board__name">{{ p.username }}</span>
+                  <span class="muted board__meta">{{ p.correctCount }}/{{ r.questions.length }} correct</span>
+                  <b class="board__score">{{ p.score }} pts</b>
+                  <span aria-hidden="true">{{ expanded() === p.playerId ? '▴' : '▾' }}</span>
+                </button>
+                @if (expanded() === p.playerId) {
+                  <ul class="detail pop-in">
+                    @for (q of r.questions; track q.id; let i = $index) {
+                      @let a = answerOf(p.playerId, q.id);
+                      <li class="detail__row" [class.is-good]="a?.isCorrect" [class.is-bad]="a && !a.isCorrect && q.type !== 'POLL'">
+                        <span class="detail__num">{{ i + 1 }}</span>
+                        <span class="detail__q">
+                          <span>{{ q.text }}</span>
+                          <span class="muted">Answer: {{ q.correctAnswer }}</span>
+                        </span>
+                        <span class="detail__a">{{ a ? a.answerText : 'No answer' }}</span>
+                        <span class="detail__mark">{{ q.type === 'POLL' ? '📊' : a?.isCorrect ? '✅' : a ? '❌' : '—' }}</span>
+                        <span class="detail__pts">{{ a?.points ?? 0 }}</span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </li>
+            } @empty {
+              <li class="muted">Nobody joined this game.</li>
+            }
+          </ol>
+        } @else {
+          <ol class="qstats card">
+            @for (q of questionStats(); track q.id; let i = $index) {
+              <li>
+                <span class="detail__num">{{ i + 1 }}</span>
+                <span class="detail__q">
+                  <span>{{ info[q.type].icon }} {{ q.text }}</span>
+                  <span class="muted">Answer: {{ q.correctAnswer }}</span>
+                </span>
+                @if (q.type === 'POLL') {
+                  <span class="muted">{{ q.answered }} votes</span>
+                } @else {
+                  <span class="qstats__bar" [attr.aria-label]="q.pct + '% correct'"><span [style.width.%]="q.pct"></span></span>
+                  <b>{{ q.correct }}/{{ q.answered }}</b>
+                }
+              </li>
+            }
+          </ol>
+        }
+      } @else {
+        <div class="spinner" aria-label="Loading results"></div>
+      }
+    }
+  } @else {
+    <div class="spinner" aria-label="Loading"></div>
+  }
+</main>
