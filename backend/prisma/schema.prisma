@@ -1,0 +1,90 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+  runtime      = "nodejs"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Quiz {
+  id            String        @id @default(cuid())
+  title         String
+  description   String?
+  coverImageUrl String?
+  enabled       Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  questions     Question[]
+  sessions      GameSession[]
+}
+
+model Question {
+  id       String   @id @default(cuid())
+  quizId   String
+  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  order    Int
+  type     String
+  text     String
+  imageUrl String?
+  points   Int      @default(100)
+  config   Json
+  answers  Answer[]
+
+  @@index([quizId, order])
+}
+
+model Player {
+  id          String          @id @default(cuid())
+  username    String
+  usernameKey String          @unique
+  createdAt   DateTime        @default(now())
+  sessions    SessionPlayer[]
+  answers     Answer[]
+}
+
+/// status: LOBBY | IN_PROGRESS | FINISHED
+model GameSession {
+  id                  String          @id @default(cuid())
+  quizId              String
+  quiz                Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  status              String          @default("LOBBY")
+  currentIndex        Int             @default(0)
+  revealedQuestionIds Json            @default("[]")
+  createdAt           DateTime        @default(now())
+  startedAt           DateTime?
+  finishedAt          DateTime?
+  players             SessionPlayer[]
+  answers             Answer[]
+
+  @@index([quizId, status])
+}
+
+model SessionPlayer {
+  sessionId String
+  session   GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  playerId  String
+  player    Player      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime    @default(now())
+
+  @@id([sessionId, playerId])
+}
+
+model Answer {
+  id         String      @id @default(cuid())
+  sessionId  String
+  session    GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  playerId   String
+  player     Player      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  payload    Json
+  isCorrect  Boolean
+  points     Int
+  answeredAt DateTime    @default(now())
+
+  @@unique([sessionId, playerId, questionId])
+}
