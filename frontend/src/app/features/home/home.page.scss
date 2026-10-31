@@ -46,3 +46,14 @@
 .home__admin {
   color: #fff;
 }
+
+.home__title .home__for {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-xxl);
+  font-weight: 600;
+  color: var(--c-pink);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}

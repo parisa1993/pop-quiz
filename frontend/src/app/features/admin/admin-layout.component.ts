@@ -9,7 +9,7 @@ import { AdminAuthService } from '../../core/admin-auth.service';
   template: `
     <header class="bar">
       <a routerLink="/admin/quizzes" class="bar__brand"
-        >🎉 Pop Quiz <span class="badge">Admin</span></a
+        >🎉 Chiara Pop Quiz <span class="badge">Admin</span></a
       >
       <nav class="bar__nav">
         <a
