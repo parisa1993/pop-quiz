@@ -1,32 +1,33 @@
 {
   "name": "pop-quiz",
   "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
   "private": true,
   "packageManager": "npm@12.2.1",
-  "dependencies": {
-    "@angular/common": "^22.2.0",
-    "@angular/compiler": "^22.2.0",
-    "@angular/core": "^22.2.0",
-    "@angular/forms": "^22.2.0",
-    "@angular/platform-browser": "^22.2.0",
-    "@angular/router": "^22.2.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @pop-quiz/shared",
+    "dev": "npm run build:shared && concurrently -k -n be,fe -c magenta,cyan \"npm run start:dev -w @pop-quiz/backend\" \"npm start -w @pop-quiz/frontend\"",
+    "dev:lan": "npm run build:shared && concurrently -k -n be,fe -c magenta,cyan \"npm run start:dev -w @pop-quiz/backend\" \"npm run start:lan -w @pop-quiz/frontend\"",
+    "build": "npm run build:shared && npm run build -w @pop-quiz/backend && npm run build -w @pop-quiz/frontend",
+    "test": "npm run build:shared && npm test -w @pop-quiz/shared && npm test -w @pop-quiz/backend && npm run test:ci -w @pop-quiz/frontend",
+    "test:e2e": "npm run build:shared && npm run test:e2e -w @pop-quiz/backend",
+    "e2e": "npm run build && playwright test"
   },
   "devDependencies": {
-    "@angular/build": "^22.2.5",
-    "@angular/cli": "^22.2.5",
-    "@angular/compiler-cli": "^22.2.0",
-    "jsdom": "^30.0.0",
-    "prettier": "^3.8.1",
-    "typescript": "~6.0.2",
-    "vitest": "^5.0.0"
+    "concurrently": "^10.0.6",
+    "prettier": "^3.8.1"
+  },
+  "allowScripts": {
+    "prisma@7.10.1": true,
+    "@prisma/engines@7.10.1": true,
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.28.2": true,
+    "@parcel/watcher@2.6.0": true,
+    "lmdb@3.5.6": true,
+    "msgpackr-extract@3.0.4": true
   }
 }
