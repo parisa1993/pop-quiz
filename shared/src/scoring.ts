@@ -1,4 +1,10 @@
-import { AnswerPayload, AnswerPayloadMap, OrderItem, PublicQuestion, Question } from './question-types.js';
+import {
+  AnswerPayload,
+  AnswerPayloadMap,
+  OrderItem,
+  PublicQuestion,
+  Question,
+} from './question-types.js';
 
 export interface GradeResult {
   isCorrect: boolean;
@@ -20,7 +26,9 @@ function isCorrect(question: Question, payload: AnswerPayload): boolean {
   switch (question.type) {
     case 'SINGLE_CHOICE':
     case 'IMAGE_CHOICE':
-      return (payload as AnswerPayloadMap['SINGLE_CHOICE']).optionId === question.config.correctOptionId;
+      return (
+        (payload as AnswerPayloadMap['SINGLE_CHOICE']).optionId === question.config.correctOptionId
+      );
     case 'MULTIPLE_CHOICE': {
       const picked = new Set((payload as AnswerPayloadMap['MULTIPLE_CHOICE']).optionIds);
       const correct = question.config.correctOptionIds;
@@ -174,7 +182,10 @@ export interface DistributionBucket {
 }
 
 /** Groups answers for the host's live bar chart. Free-form types are bucketed by right/wrong. */
-export function answerDistribution(question: Question, payloads: AnswerPayload[]): DistributionBucket[] {
+export function answerDistribution(
+  question: Question,
+  payloads: AnswerPayload[],
+): DistributionBucket[] {
   const choiceBuckets = (correctIds: string[]): DistributionBucket[] =>
     'options' in question.config
       ? question.config.options.map((o, i) => ({
@@ -182,7 +193,9 @@ export function answerDistribution(question: Question, payloads: AnswerPayload[]
           label: o.text || `Picture ${i + 1}`,
           imageUrl: o.imageUrl ?? null,
           count: payloads.filter((p) => {
-            const pick = p as Partial<AnswerPayloadMap['MULTIPLE_CHOICE'] & AnswerPayloadMap['SINGLE_CHOICE']>;
+            const pick = p as Partial<
+              AnswerPayloadMap['MULTIPLE_CHOICE'] & AnswerPayloadMap['SINGLE_CHOICE']
+            >;
             return pick.optionId === o.id || (pick.optionIds ?? []).includes(o.id);
           }).length,
           correct: correctIds.includes(o.id),

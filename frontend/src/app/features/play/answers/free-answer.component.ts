@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  linkedSignal,
+  output,
+} from '@angular/core';
 import type { AnswerPayload, PublicQuestion } from '@pop-quiz/shared';
 
 /** Typed answers: free text (TYPE_ANSWER) or a number (NUMBER_GUESS). */
@@ -7,7 +14,9 @@ import type { AnswerPayload, PublicQuestion } from '@pop-quiz/shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form class="free" (submit)="submit($event)">
-      <label class="visually-hidden" for="free-answer">{{ isNumber() ? 'Your guess' : 'Your answer' }}</label>
+      <label class="visually-hidden" for="free-answer">{{
+        isNumber() ? 'Your guess' : 'Your answer'
+      }}</label>
       <div class="free__row">
         <input
           id="free-answer"
@@ -28,15 +37,29 @@ import type { AnswerPayload, PublicQuestion } from '@pop-quiz/shared';
         }
       </div>
       @if (!locked()) {
-        <button class="btn btn--yellow btn--lg btn--block" [disabled]="!valid()">Lock it in 🔒</button>
+        <button class="btn btn--yellow btn--lg btn--block" [disabled]="!valid()">
+          Lock it in 🔒
+        </button>
       }
     </form>
   `,
   styles: `
-    .free { display: grid; gap: var(--space-4); }
-    .free__row { display: flex; align-items: center; gap: var(--space-3); }
-    .free__unit { font-weight: 800; color: var(--c-ink-soft); }
-    .input:disabled { background: var(--c-surface-2); }
+    .free {
+      display: grid;
+      gap: var(--space-4);
+    }
+    .free__row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .free__unit {
+      font-weight: 800;
+      color: var(--c-ink-soft);
+    }
+    .input:disabled {
+      background: var(--c-surface-2);
+    }
   `,
 })
 export class FreeAnswerComponent {

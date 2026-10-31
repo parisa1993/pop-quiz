@@ -1,5 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, provideRouter, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  provideRouter,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
 import { createApiMock, provideApiMock } from '../../testing/test-helpers';
 import { AdminAuthService } from './admin-auth.service';
 import { adminGuard, playerGuard } from './guards';
@@ -7,11 +12,15 @@ import { PlayerSessionService } from './player-session.service';
 
 describe('guards', () => {
   const run = (guard: typeof adminGuard) =>
-    TestBed.runInInjectionContext(() => guard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot));
+    TestBed.runInInjectionContext(() =>
+      guard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+    );
 
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([]), provideApiMock(createApiMock())] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideApiMock(createApiMock())],
+    });
   });
 
   it('adminGuard requires a token', () => {

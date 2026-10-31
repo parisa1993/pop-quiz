@@ -20,7 +20,10 @@ describe('ImageResizeService', () => {
   it('shrinks big photos to JPEG', async () => {
     const big = new File([new Uint8Array(300 * 1024)], 'photo.png', { type: 'image/png' });
     const bitmap = { width: 4000, height: 2000, close: vi.fn() };
-    vi.stubGlobal('createImageBitmap', vi.fn(async () => bitmap));
+    vi.stubGlobal(
+      'createImageBitmap',
+      vi.fn(async () => bitmap),
+    );
     const out = new Blob(['jpg'], { type: 'image/jpeg' });
     const ctx = { drawImage: vi.fn() };
     const createElement = document.createElement.bind(document);

@@ -15,7 +15,10 @@ describe('QuizzesController', () => {
     expect(await controller.list()).toEqual(['list']);
     expect(await controller.get('z')).toEqual({ id: 'z' });
     expect(await controller.create({ title: 'T' })).toEqual({ created: { title: 'T' } });
-    expect(await controller.update('z', { enabled: true })).toEqual({ id: 'z', body: { enabled: true } });
+    expect(await controller.update('z', { enabled: true })).toEqual({
+      id: 'z',
+      body: { enabled: true },
+    });
     await controller.remove('z');
     expect(service.remove).toHaveBeenCalledWith('z');
   });

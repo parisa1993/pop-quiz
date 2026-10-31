@@ -34,7 +34,11 @@ describe('SessionsService', () => {
       const again = await service.joinQuiz(quiz.id, ann.id);
       expect(again).toBe(first);
       expect(await service.isPlayerInSession(first, ann.id)).toBe(true);
-      expect(await service.activeSessionInfo(quiz.id)).toEqual({ id: first, status: 'LOBBY', playerCount: 1 });
+      expect(await service.activeSessionInfo(quiz.id)).toEqual({
+        id: first,
+        status: 'LOBBY',
+        playerCount: 1,
+      });
     });
 
     it('refuses disabled quizzes, unknown players and empty quizzes', async () => {
@@ -91,9 +95,9 @@ describe('SessionsService', () => {
     it('grades and stores the first answer only', async () => {
       const { sessionId, questions, ann } = await startedGame();
       await service.submitAnswer(sessionId, ann.id, questions[0].id, { value: true });
-      await expect(service.submitAnswer(sessionId, ann.id, questions[0].id, { value: false })).rejects.toThrow(
-        'You already answered this question',
-      );
+      await expect(
+        service.submitAnswer(sessionId, ann.id, questions[0].id, { value: false }),
+      ).rejects.toThrow('You already answered this question');
       const stored = await db.prisma.answer.findFirstOrThrow();
       expect(stored).toMatchObject({ isCorrect: true, points: 100 });
     });
@@ -101,19 +105,19 @@ describe('SessionsService', () => {
     it('rejects closed questions, outsiders, bad payloads and revealed questions', async () => {
       const { sessionId, questions, ann, ben } = await startedGame();
       const outsider = await seedPlayer(db.prisma, 'Cat');
-      await expect(service.submitAnswer(sessionId, ann.id, questions[1].id, { optionId: 'a' })).rejects.toThrow(
-        'This question is closed',
-      );
-      await expect(service.submitAnswer(sessionId, outsider.id, questions[0].id, { value: true })).rejects.toThrow(
-        'Join the game first',
-      );
-      await expect(service.submitAnswer(sessionId, ann.id, questions[0].id, { value: 1 })).rejects.toBeInstanceOf(
-        BadRequestException,
-      );
+      await expect(
+        service.submitAnswer(sessionId, ann.id, questions[1].id, { optionId: 'a' }),
+      ).rejects.toThrow('This question is closed');
+      await expect(
+        service.submitAnswer(sessionId, outsider.id, questions[0].id, { value: true }),
+      ).rejects.toThrow('Join the game first');
+      await expect(
+        service.submitAnswer(sessionId, ann.id, questions[0].id, { value: 1 }),
+      ).rejects.toBeInstanceOf(BadRequestException);
       await service.reveal(sessionId);
-      await expect(service.submitAnswer(sessionId, ben.id, questions[0].id, { value: true })).rejects.toThrow(
-        'Too late',
-      );
+      await expect(
+        service.submitAnswer(sessionId, ben.id, questions[0].id, { value: true }),
+      ).rejects.toThrow('Too late');
     });
   });
 
@@ -126,7 +130,12 @@ describe('SessionsService', () => {
       let ctx = (await service.loadContext(sessionId))!;
       const connected = new Set([ann.id]);
       let annView = service.buildPlayerState(ctx, ann.id, connected);
-      expect(annView).toMatchObject({ status: 'IN_PROGRESS', revealed: false, myResult: null, myScore: 0 });
+      expect(annView).toMatchObject({
+        status: 'IN_PROGRESS',
+        revealed: false,
+        myResult: null,
+        myScore: 0,
+      });
       expect(annView.myAnswer).toEqual({ value: true });
       expect(annView.players).toEqual([
         { id: ann.id, username: 'Ann', connected: true },
@@ -134,14 +143,22 @@ describe('SessionsService', () => {
       ]);
 
       const hostView = service.buildHostState(ctx, connected);
-      expect(hostView).toMatchObject({ answeredCount: 2, correctAnswerText: 'True', revealed: false });
+      expect(hostView).toMatchObject({
+        answeredCount: 2,
+        correctAnswerText: 'True',
+        revealed: false,
+      });
       expect(hostView.players.every((p) => p.answeredCurrent)).toBe(true);
       expect(hostView.leaderboard[0]).toMatchObject({ username: 'Ann', score: 100, rank: 1 });
 
       await service.reveal(sessionId);
       ctx = (await service.loadContext(sessionId))!;
       annView = service.buildPlayerState(ctx, ann.id, connected);
-      expect(annView).toMatchObject({ revealed: true, myResult: { isCorrect: true, points: 100 }, myScore: 100 });
+      expect(annView).toMatchObject({
+        revealed: true,
+        myResult: { isCorrect: true, points: 100 },
+        myScore: 100,
+      });
 
       await service.finish(sessionId);
       ctx = (await service.loadContext(sessionId))!;
@@ -154,7 +171,12 @@ describe('SessionsService', () => {
       const { quiz, sessionId } = await startedGame();
       const sessions = await service.listSessions(quiz.id);
       expect(sessions).toEqual([
-        expect.objectContaining({ id: sessionId, status: 'IN_PROGRESS', playerCount: 2, finishedAt: null }),
+        expect.objectContaining({
+          id: sessionId,
+          status: 'IN_PROGRESS',
+          playerCount: 2,
+          finishedAt: null,
+        }),
       ]);
     });
   });

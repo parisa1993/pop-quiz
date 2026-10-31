@@ -30,7 +30,8 @@ export function parseQuizInput(body: unknown, partial: boolean): Partial<QuizInp
   if (coverImageUrl !== undefined) result.coverImageUrl = coverImageUrl;
 
   if (raw['enabled'] !== undefined) {
-    if (typeof raw['enabled'] !== 'boolean') throw new BadRequestException('Enabled must be true or false');
+    if (typeof raw['enabled'] !== 'boolean')
+      throw new BadRequestException('Enabled must be true or false');
     result.enabled = raw['enabled'];
   }
   return result;

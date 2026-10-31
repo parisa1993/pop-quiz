@@ -35,17 +35,37 @@ export class FakeSocket {
   }
 }
 
-export const provideFakeSocket = (socket: FakeSocket) => ({ provide: SocketService, useValue: socket });
+export const provideFakeSocket = (socket: FakeSocket) => ({
+  provide: SocketService,
+  useValue: socket,
+});
 
 export type ApiMock = { [K in keyof ApiService]: ReturnType<typeof vi.fn> };
 
 export function createApiMock(overrides: Partial<ApiMock> = {}): ApiMock {
   const names: (keyof ApiService)[] = [
-    'adminLogin', 'listQuizzes', 'getQuiz', 'createQuiz', 'updateQuiz', 'deleteQuiz', 'createQuestion',
-    'updateQuestion', 'deleteQuestion', 'reorderQuestions', 'uploadImage', 'openSession', 'listSessions',
-    'getResults', 'createPlayer', 'getPlayer', 'listGames', 'joinGame',
+    'adminLogin',
+    'listQuizzes',
+    'getQuiz',
+    'createQuiz',
+    'updateQuiz',
+    'deleteQuiz',
+    'createQuestion',
+    'updateQuestion',
+    'deleteQuestion',
+    'reorderQuestions',
+    'uploadImage',
+    'openSession',
+    'listSessions',
+    'getResults',
+    'createPlayer',
+    'getPlayer',
+    'listGames',
+    'joinGame',
   ];
-  const mock = Object.fromEntries(names.map((n) => [n, vi.fn().mockResolvedValue(undefined)])) as unknown as ApiMock;
+  const mock = Object.fromEntries(
+    names.map((n) => [n, vi.fn().mockResolvedValue(undefined)]),
+  ) as unknown as ApiMock;
   return Object.assign(mock, overrides);
 }
 
@@ -106,7 +126,12 @@ export const publicChoice: PublicQuestion = {
   text: 'Favourite colour?',
   imageUrl: null,
   points: 200,
-  config: { options: [{ id: 'a', text: 'Pink' }, { id: 'b', text: 'Blue' }] },
+  config: {
+    options: [
+      { id: 'a', text: 'Pink' },
+      { id: 'b', text: 'Blue' },
+    ],
+  },
 };
 
 export function playerState(overrides: Partial<PlayerGameState> = {}): PlayerGameState {

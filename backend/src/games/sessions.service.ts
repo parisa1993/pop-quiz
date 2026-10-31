@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   ActiveSessionInfo,
   answerDistribution,
@@ -82,7 +87,11 @@ export class SessionsService {
       include: { _count: { select: { players: true } } },
     });
     return session
-      ? { id: session.id, status: session.status as SessionStatus, playerCount: session._count.players }
+      ? {
+          id: session.id,
+          status: session.status as SessionStatus,
+          playerCount: session._count.players,
+        }
       : null;
   }
 
@@ -147,7 +156,8 @@ export class SessionsService {
       include: { _count: { select: { questions: true } } },
     });
     if (!quiz) throw new NotFoundException('Quiz not found');
-    if (quiz._count.questions === 0) throw new BadRequestException('Add at least one question first');
+    if (quiz._count.questions === 0)
+      throw new BadRequestException('Add at least one question first');
 
     const existing = await this.prisma.gameSession.findFirst({
       where: { quizId, status: { in: ACTIVE } },
@@ -189,7 +199,10 @@ export class SessionsService {
     const next = ctx.session.currentIndex + step;
     if (next < 0) throw new ConflictException('Already at the first question');
     if (next >= ctx.questions.length) throw new ConflictException('That was the last question');
-    await this.prisma.gameSession.update({ where: { id: sessionId }, data: { currentIndex: next } });
+    await this.prisma.gameSession.update({
+      where: { id: sessionId },
+      data: { currentIndex: next },
+    });
   }
 
   async reveal(sessionId: string): Promise<void> {
@@ -218,20 +231,28 @@ export class SessionsService {
 
   // ---------- Answers ----------
 
-  async submitAnswer(sessionId: string, playerId: string, questionId: string, payload: unknown): Promise<void> {
+  async submitAnswer(
+    sessionId: string,
+    playerId: string,
+    questionId: string,
+    payload: unknown,
+  ): Promise<void> {
     const ctx = await this.requireContext(sessionId);
     if (ctx.session.status !== 'IN_PROGRESS') throw new ConflictException("The game isn't running");
-    if (!ctx.players.some((p) => p.id === playerId)) throw new ConflictException('Join the game first');
+    if (!ctx.players.some((p) => p.id === playerId))
+      throw new ConflictException('Join the game first');
 
     const current = ctx.questions[ctx.session.currentIndex];
     if (!current || current.id !== questionId) {
       throw new ConflictException('This question is closed. Follow the host!');
     }
-    if (ctx.revealedIds.has(current.id)) throw new ConflictException('Too late, the answer was revealed');
+    if (ctx.revealedIds.has(current.id))
+      throw new ConflictException('Too late, the answer was revealed');
     if (ctx.answers.some((a) => a.playerId === playerId && a.questionId === questionId)) {
       throw new ConflictException('You already answered this question');
     }
-    if (!isValidAnswerPayload(current, payload)) throw new BadRequestException('That answer is not valid');
+    if (!isValidAnswerPayload(current, payload))
+      throw new BadRequestException('That answer is not valid');
 
     const { isCorrect, points } = gradeAnswer(current, payload);
     try {
@@ -270,7 +291,9 @@ export class SessionsService {
   }
 
   private currentQuestion(ctx: SessionContext): Question | null {
-    return ctx.session.status === 'IN_PROGRESS' ? (ctx.questions[ctx.session.currentIndex] ?? null) : null;
+    return ctx.session.status === 'IN_PROGRESS'
+      ? (ctx.questions[ctx.session.currentIndex] ?? null)
+      : null;
   }
 
   buildPlayerState(ctx: SessionContext, playerId: string, connected: Set<string>): PlayerGameState {
@@ -293,7 +316,8 @@ export class SessionsService {
       question: question ? toPublicQuestion(question) : null,
       revealed,
       myAnswer: myAnswer?.payload ?? null,
-      myResult: revealed && myAnswer ? { isCorrect: myAnswer.isCorrect, points: myAnswer.points } : null,
+      myResult:
+        revealed && myAnswer ? { isCorrect: myAnswer.isCorrect, points: myAnswer.points } : null,
       correctAnswerText: revealed && question ? describeCorrectAnswer(question) : null,
       myScore: me?.score ?? 0,
       final:
@@ -326,7 +350,12 @@ export class SessionsService {
         answeredCurrent: answered.has(p.id),
       })),
       answeredCount: current.length,
-      distribution: question ? answerDistribution(question, current.map((a) => a.payload)) : [],
+      distribution: question
+        ? answerDistribution(
+            question,
+            current.map((a) => a.payload),
+          )
+        : [],
       leaderboard: board,
     };
   }

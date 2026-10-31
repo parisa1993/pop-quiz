@@ -9,7 +9,9 @@ export const ANSWER_STYLES = [
 ] as const;
 
 export function answerStyle(index: number): (typeof ANSWER_STYLES)[number] {
-  return ANSWER_STYLES[((index % ANSWER_STYLES.length) + ANSWER_STYLES.length) % ANSWER_STYLES.length];
+  return ANSWER_STYLES[
+    ((index % ANSWER_STYLES.length) + ANSWER_STYLES.length) % ANSWER_STYLES.length
+  ];
 }
 
 export const MEDALS = ['🥇', '🥈', '🥉'];

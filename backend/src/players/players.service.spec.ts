@@ -4,7 +4,10 @@ import { normalizeUsername, PlayersService } from './players.service.js';
 
 describe('normalizeUsername', () => {
   it('trims, collapses spaces and builds a case-insensitive key', () => {
-    expect(normalizeUsername('  Party   Animal ')).toEqual({ username: 'Party Animal', key: 'party animal' });
+    expect(normalizeUsername('  Party   Animal ')).toEqual({
+      username: 'Party Animal',
+      key: 'party animal',
+    });
   });
 
   it('enforces length and type', () => {

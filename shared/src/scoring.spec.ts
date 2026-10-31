@@ -18,7 +18,11 @@ const options = [
   { id: 'c', text: 'Cherry' },
 ];
 
-const single: Question = { ...base, type: 'SINGLE_CHOICE', config: { options, correctOptionId: 'b' } };
+const single: Question = {
+  ...base,
+  type: 'SINGLE_CHOICE',
+  config: { options, correctOptionId: 'b' },
+};
 const multi: Question = {
   ...base,
   type: 'MULTIPLE_CHOICE',
@@ -159,7 +163,11 @@ describe('describeAnswer / describeCorrectAnswer', () => {
 
 describe('answerDistribution', () => {
   it('counts choice answers per option', () => {
-    const buckets = answerDistribution(single, [{ optionId: 'b' }, { optionId: 'b' }, { optionId: 'a' }]);
+    const buckets = answerDistribution(single, [
+      { optionId: 'b' },
+      { optionId: 'b' },
+      { optionId: 'a' },
+    ]);
     expect(buckets.map((b) => [b.key, b.count, b.correct])).toEqual([
       ['a', 1, false],
       ['b', 2, true],
@@ -173,7 +181,11 @@ describe('answerDistribution', () => {
   });
 
   it('splits true/false', () => {
-    const buckets = answerDistribution(trueFalse, [{ value: true }, { value: false }, { value: false }]);
+    const buckets = answerDistribution(trueFalse, [
+      { value: true },
+      { value: false },
+      { value: false },
+    ]);
     expect(buckets).toEqual([
       { key: 'true', label: 'True', count: 1, correct: false },
       { key: 'false', label: 'False', count: 2, correct: true },

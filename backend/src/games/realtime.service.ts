@@ -36,7 +36,10 @@ export class RealtimeService {
     for (const socket of sockets) {
       const data = socket.data as SocketData;
       if (data.playerId) {
-        socket.emit(ServerEvents.GameState, this.sessions.buildPlayerState(ctx, data.playerId, connected));
+        socket.emit(
+          ServerEvents.GameState,
+          this.sessions.buildPlayerState(ctx, data.playerId, connected),
+        );
       } else if (data.isAdmin) {
         hostState ??= this.sessions.buildHostState(ctx, connected);
         socket.emit(ServerEvents.HostState, hostState);

@@ -1,5 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { QUESTION_TYPE_INFO, ResultAnswer, SessionResults, SessionSummary } from '@pop-quiz/shared';
 import { ApiService } from '../../../core/api.service';
@@ -48,7 +56,12 @@ export class ResultsPage implements OnInit {
     return r.questions.map((q) => {
       const answers = r.answers.filter((a) => a.questionId === q.id);
       const correct = answers.filter((a) => a.isCorrect).length;
-      return { ...q, answered: answers.length, correct, pct: answers.length ? Math.round((correct / answers.length) * 100) : 0 };
+      return {
+        ...q,
+        answered: answers.length,
+        correct,
+        pct: answers.length ? Math.round((correct / answers.length) * 100) : 0,
+      };
     });
   });
 
@@ -77,9 +90,14 @@ export class ResultsPage implements OnInit {
 
   private async loadSessions(): Promise<void> {
     try {
-      const sessions = (await this.api.listSessions(this.id())).filter((s) => s.status !== 'LOBBY' || s.playerCount > 0);
+      const sessions = (await this.api.listSessions(this.id())).filter(
+        (s) => s.status !== 'LOBBY' || s.playerCount > 0,
+      );
       this.sessions.set(sessions);
-      const wanted = sessions.find((s) => s.id === this.session()) ?? sessions.find((s) => s.status === 'FINISHED') ?? sessions[0];
+      const wanted =
+        sessions.find((s) => s.id === this.session()) ??
+        sessions.find((s) => s.status === 'FINISHED') ??
+        sessions[0];
       if (wanted) await this.select(wanted.id);
     } catch (error) {
       this.toast.error(errorMessage(error));

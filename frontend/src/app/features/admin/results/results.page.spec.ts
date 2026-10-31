@@ -4,7 +4,11 @@ import type { SessionResults, SessionSummary } from '@pop-quiz/shared';
 import { ApiMock, createApiMock, flush, provideApiMock } from '../../../../testing/test-helpers';
 import { ResultsPage } from './results.page';
 
-const session = (id: string, status: SessionSummary['status'], playerCount = 2): SessionSummary => ({
+const session = (
+  id: string,
+  status: SessionSummary['status'],
+  playerCount = 2,
+): SessionSummary => ({
   id,
   quizId: 'z1',
   status,
@@ -21,8 +25,22 @@ const results: SessionResults = {
     { playerId: 'p2', username: 'Ben', score: 0, rank: 2, correctCount: 0, answeredCount: 1 },
   ],
   questions: [
-    { id: 'q1', order: 0, text: 'Cat name?', type: 'TYPE_ANSWER', points: 100, correctAnswer: 'Miso' },
-    { id: 'q2', order: 1, text: 'Colour?', type: 'SINGLE_CHOICE', points: 200, correctAnswer: 'Pink' },
+    {
+      id: 'q1',
+      order: 0,
+      text: 'Cat name?',
+      type: 'TYPE_ANSWER',
+      points: 100,
+      correctAnswer: 'Miso',
+    },
+    {
+      id: 'q2',
+      order: 1,
+      text: 'Colour?',
+      type: 'SINGLE_CHOICE',
+      points: 200,
+      correctAnswer: 'Pink',
+    },
   ],
   answers: [
     { playerId: 'p1', questionId: 'q1', answerText: 'miso', isCorrect: true, points: 100 },
@@ -52,7 +70,11 @@ describe('ResultsPage', () => {
   }
 
   it('opens the latest finished game and shows the podium and leaderboard', async () => {
-    await setup([session('s2', 'IN_PROGRESS'), session('s1', 'FINISHED'), session('s0', 'LOBBY', 0)]);
+    await setup([
+      session('s2', 'IN_PROGRESS'),
+      session('s1', 'FINISHED'),
+      session('s0', 'LOBBY', 0),
+    ]);
     expect(api.getResults).toHaveBeenCalledWith('s1');
     expect(el.querySelectorAll('.session')).toHaveLength(2);
     expect(el.querySelector('app-podium')).not.toBeNull();

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  linkedSignal,
+  output,
+} from '@angular/core';
 import type { AnswerPayload, ChoiceOption, PublicQuestion } from '@pop-quiz/shared';
 import { answerStyle } from '../../../shared/answer-style';
 
@@ -12,7 +19,12 @@ const TRUE_FALSE: ChoiceOption[] = [
   selector: 'app-choice-answer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="tiles" [class.tiles--images]="isImage()" role="group" [attr.aria-label]="multiple() ? 'Pick all that apply' : 'Pick one'">
+    <div
+      class="tiles"
+      [class.tiles--images]="isImage()"
+      role="group"
+      [attr.aria-label]="multiple() ? 'Pick all that apply' : 'Pick one'"
+    >
       @for (option of options(); track option.id; let i = $index) {
         <button
           type="button"
@@ -25,20 +37,31 @@ const TRUE_FALSE: ChoiceOption[] = [
           (click)="tap(option.id)"
         >
           @if (option.imageUrl) {
-            <img [src]="option.imageUrl" [alt]="option.text || 'Picture ' + (i + 1)" class="tile__img" />
+            <img
+              [src]="option.imageUrl"
+              [alt]="option.text || 'Picture ' + (i + 1)"
+              class="tile__img"
+            />
           }
           <span class="tile__label">
             <span class="shape" aria-hidden="true">{{ style(i).shape }}</span>
             <span>{{ option.text || 'Picture ' + (i + 1) }}</span>
             @if (multiple() && !locked()) {
-              <span class="tile__check" aria-hidden="true">{{ picked().includes(option.id) ? '✔' : '' }}</span>
+              <span class="tile__check" aria-hidden="true">{{
+                picked().includes(option.id) ? '✔' : ''
+              }}</span>
             }
           </span>
         </button>
       }
     </div>
     @if (multiple() && !locked()) {
-      <button type="button" class="btn btn--yellow btn--lg btn--block submit" [disabled]="picked().length === 0" (click)="submitMany()">
+      <button
+        type="button"
+        class="btn btn--yellow btn--lg btn--block submit"
+        [disabled]="picked().length === 0"
+        (click)="submitMany()"
+      >
         Lock in {{ picked().length || '' }} answer{{ picked().length === 1 ? '' : 's' }} 🔒
       </button>
     }
@@ -49,7 +72,9 @@ const TRUE_FALSE: ChoiceOption[] = [
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
       gap: var(--space-3);
     }
-    .tiles--images { grid-template-columns: repeat(2, 1fr); }
+    .tiles--images {
+      grid-template-columns: repeat(2, 1fr);
+    }
     .tile {
       position: relative;
       min-height: 84px;
@@ -67,16 +92,51 @@ const TRUE_FALSE: ChoiceOption[] = [
       text-align: left;
       cursor: pointer;
       box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.18);
-      transition: transform var(--dur) var(--ease-bounce), opacity var(--dur), filter var(--dur);
+      transition:
+        transform var(--dur) var(--ease-bounce),
+        opacity var(--dur),
+        filter var(--dur);
     }
-    .tile:active:not(:disabled) { transform: scale(0.96); }
-    .tile:disabled { cursor: default; }
-    .tile__img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #fff; }
-    .tile__label { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); }
-    .tile__check { margin-left: auto; width: 28px; height: 28px; border-radius: 8px; border: 3px solid #fff; display: grid; place-items: center; font-size: 1rem; }
-    .is-picked { outline: 4px solid #fff; outline-offset: -4px; transform: scale(1.02); }
-    .is-dimmed { opacity: 0.35; filter: saturate(0.4); }
-    .submit { margin-top: var(--space-4); }
+    .tile:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+    .tile:disabled {
+      cursor: default;
+    }
+    .tile__img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: #fff;
+    }
+    .tile__label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+    }
+    .tile__check {
+      margin-left: auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 3px solid #fff;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+    }
+    .is-picked {
+      outline: 4px solid #fff;
+      outline-offset: -4px;
+      transform: scale(1.02);
+    }
+    .is-dimmed {
+      opacity: 0.35;
+      filter: saturate(0.4);
+    }
+    .submit {
+      margin-top: var(--space-4);
+    }
   `,
 })
 export class ChoiceAnswerComponent {
@@ -109,7 +169,9 @@ export class ChoiceAnswerComponent {
       return;
     }
     this.picked.set([id]);
-    this.submitted.emit(this.question().type === 'TRUE_FALSE' ? { value: id === 'true' } : { optionId: id });
+    this.submitted.emit(
+      this.question().type === 'TRUE_FALSE' ? { value: id === 'true' } : { optionId: id },
+    );
   }
 
   protected submitMany(): void {

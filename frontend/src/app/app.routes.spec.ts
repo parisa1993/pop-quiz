@@ -2,7 +2,8 @@ import { Route } from '@angular/router';
 import { adminGuard, playerGuard } from './core/guards';
 import { routes } from './app.routes';
 
-const find = (path: string, list: Route[] = routes): Route | undefined => list.find((r) => r.path === path);
+const find = (path: string, list: Route[] = routes): Route | undefined =>
+  list.find((r) => r.path === path);
 
 describe('routes', () => {
   it('guards gamer and admin pages', () => {

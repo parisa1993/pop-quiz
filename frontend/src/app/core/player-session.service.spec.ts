@@ -23,7 +23,10 @@ describe('PlayerSessionService', () => {
     const players = setup();
     await players.register('Ana');
     expect(players.player()).toEqual({ id: 'p1', username: 'Ana' });
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEYS.player)!)).toEqual({ id: 'p1', username: 'Ana' });
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEYS.player)!)).toEqual({
+      id: 'p1',
+      username: 'Ana',
+    });
   });
 
   it('auto-logs in from localStorage, including the current game', () => {

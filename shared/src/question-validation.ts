@@ -14,7 +14,8 @@ import {
   QuestionType,
 } from './question-types.js';
 
-export type ValidationResult = { valid: true; value: QuestionInput } | { valid: false; errors: string[] };
+export type ValidationResult =
+  { valid: true; value: QuestionInput } | { valid: false; errors: string[] };
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -72,7 +73,11 @@ function readItems(raw: unknown, errors: string[]): OrderItem[] {
   return items;
 }
 
-function readConfig(type: QuestionType, raw: unknown, errors: string[]): QuestionConfigMap[QuestionType] {
+function readConfig(
+  type: QuestionType,
+  raw: unknown,
+  errors: string[],
+): QuestionConfigMap[QuestionType] {
   const c = isObject(raw) ? raw : {};
   switch (type) {
     case 'SINGLE_CHOICE':
@@ -95,7 +100,8 @@ function readConfig(type: QuestionType, raw: unknown, errors: string[]): Questio
       return { options, correctOptionIds: [...new Set(correctOptionIds)] };
     }
     case 'TRUE_FALSE':
-      if (typeof c['correct'] !== 'boolean') errors.push('Choose whether the statement is true or false');
+      if (typeof c['correct'] !== 'boolean')
+        errors.push('Choose whether the statement is true or false');
       return { correct: c['correct'] === true };
     case 'TYPE_ANSWER': {
       const raw = c['acceptedAnswers'];
@@ -150,7 +156,10 @@ export function validateQuestionInput(input: unknown): ValidationResult {
 }
 
 /** Checks a gamer's answer has the right shape for the question. */
-export function isValidAnswerPayload(question: Question, payload: unknown): payload is AnswerPayload {
+export function isValidAnswerPayload(
+  question: Question,
+  payload: unknown,
+): payload is AnswerPayload {
   if (!isObject(payload)) return false;
   switch (question.type) {
     case 'SINGLE_CHOICE':

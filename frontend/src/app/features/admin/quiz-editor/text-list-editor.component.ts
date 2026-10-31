@@ -1,4 +1,10 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { newId } from '@pop-quiz/shared';
 
@@ -13,11 +19,18 @@ export interface TextItem {
   imports: [CdkDropList, CdkDrag, CdkDragHandle],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <ol class="list" cdkDropList [cdkDropListDisabled]="!draggable()" (cdkDropListDropped)="drop($event)">
+    <ol
+      class="list"
+      cdkDropList
+      [cdkDropListDisabled]="!draggable()"
+      (cdkDropListDropped)="drop($event)"
+    >
       @for (item of items(); track item.id; let i = $index) {
         <li class="list__item" cdkDrag cdkDragLockAxis="y">
           @if (draggable()) {
-            <button type="button" class="drag-handle" cdkDragHandle aria-label="Drag to reorder">⠿</button>
+            <button type="button" class="drag-handle" cdkDragHandle aria-label="Drag to reorder">
+              ⠿
+            </button>
             <span class="list__num">{{ i + 1 }}</span>
           }
           <input
@@ -28,7 +41,13 @@ export interface TextItem {
             [attr.aria-label]="placeholder() + ' ' + (i + 1)"
             maxlength="120"
           />
-          <button type="button" class="icon-btn" (click)="remove(i)" [disabled]="items().length <= min()" [attr.aria-label]="'Remove ' + (i + 1)">
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="remove(i)"
+            [disabled]="items().length <= min()"
+            [attr.aria-label]="'Remove ' + (i + 1)"
+          >
             ✕
           </button>
         </li>
@@ -39,9 +58,26 @@ export interface TextItem {
     }
   `,
   styles: `
-    .list { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-2); }
-    .list__item { display: flex; align-items: center; gap: var(--space-2); background: var(--c-surface); border-radius: var(--radius-m); }
-    .list__num { font-weight: 800; color: var(--c-primary); width: 1.5em; text-align: center; }
+    .list {
+      list-style: none;
+      margin: 0 0 var(--space-3);
+      padding: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+    .list__item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--c-surface);
+      border-radius: var(--radius-m);
+    }
+    .list__num {
+      font-weight: 800;
+      color: var(--c-primary);
+      width: 1.5em;
+      text-align: center;
+    }
   `,
 })
 export class TextListEditorComponent {

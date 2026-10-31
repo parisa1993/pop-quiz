@@ -12,7 +12,12 @@ import { ToastService } from '../core/toast.service';
     <div class="upload" [class.upload--compact]="compact()">
       @if (url(); as src) {
         <img [src]="src" [alt]="label()" class="upload__preview" />
-        <button type="button" class="icon-btn upload__remove" (click)="changed.emit(null)" aria-label="Remove picture">
+        <button
+          type="button"
+          class="icon-btn upload__remove"
+          (click)="changed.emit(null)"
+          aria-label="Remove picture"
+        >
           ✕
         </button>
       } @else {

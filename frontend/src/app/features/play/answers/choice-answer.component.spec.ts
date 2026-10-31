@@ -19,7 +19,10 @@ describe('ChoiceAnswerComponent', () => {
 
   it('submits a single choice on tap', async () => {
     const { tiles, submitted } = await setup(publicChoice);
-    expect(tiles().map((t) => t.textContent?.trim())).toEqual([expect.stringContaining('Pink'), expect.stringContaining('Blue')]);
+    expect(tiles().map((t) => t.textContent?.trim())).toEqual([
+      expect.stringContaining('Pink'),
+      expect.stringContaining('Blue'),
+    ]);
     tiles()[1].click();
     expect(submitted).toHaveBeenCalledWith({ optionId: 'b' });
   });
@@ -32,7 +35,11 @@ describe('ChoiceAnswerComponent', () => {
   });
 
   it('collects several picks for multi-select', async () => {
-    const { tiles, el, fixture, submitted } = await setup({ ...publicChoice, type: 'MULTIPLE_CHOICE', config: { ...publicChoice.config, multiple: true } });
+    const { tiles, el, fixture, submitted } = await setup({
+      ...publicChoice,
+      type: 'MULTIPLE_CHOICE',
+      config: { ...publicChoice.config, multiple: true },
+    });
     const lock = () => el.querySelector('.submit') as HTMLButtonElement;
     expect(lock().disabled).toBe(true);
     tiles()[0].click();
@@ -56,7 +63,12 @@ describe('ChoiceAnswerComponent', () => {
     const { el } = await setup({
       ...publicChoice,
       type: 'IMAGE_CHOICE',
-      config: { options: [{ id: 'x', text: '', imageUrl: '/u/x.png' }, { id: 'y', text: '', imageUrl: '/u/y.png' }] },
+      config: {
+        options: [
+          { id: 'x', text: '', imageUrl: '/u/x.png' },
+          { id: 'y', text: '', imageUrl: '/u/y.png' },
+        ],
+      },
     });
     expect(el.querySelectorAll('img.tile__img')).toHaveLength(2);
     expect(el.textContent).toContain('Picture 1');

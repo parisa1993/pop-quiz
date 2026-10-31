@@ -2,8 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import type { PublicQuestion } from '@pop-quiz/shared';
 import { FreeAnswerComponent } from './free-answer.component';
 
-const typed: PublicQuestion = { id: 'q', type: 'TYPE_ANSWER', text: 'Cat name?', points: 100, config: {} };
-const number: PublicQuestion = { id: 'q', type: 'NUMBER_GUESS', text: 'Age?', points: 100, config: { unit: 'years' } };
+const typed: PublicQuestion = {
+  id: 'q',
+  type: 'TYPE_ANSWER',
+  text: 'Cat name?',
+  points: 100,
+  config: {},
+};
+const number: PublicQuestion = {
+  id: 'q',
+  type: 'NUMBER_GUESS',
+  text: 'Age?',
+  points: 100,
+  config: { unit: 'years' },
+};
 
 describe('FreeAnswerComponent', () => {
   async function setup(question: PublicQuestion, answer: unknown = null, locked = false) {

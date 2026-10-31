@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import type { QuizDetail, QuizInput, QuizSummary } from '@pop-quiz/shared';
 import { AdminGuard } from '../auth/admin.guard.js';
 import { QuizzesService } from './quizzes.service.js';

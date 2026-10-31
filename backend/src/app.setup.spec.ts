@@ -20,7 +20,10 @@ describe('configureApp', () => {
 
     expect(app.setGlobalPrefix).toHaveBeenCalledWith('api');
     expect(app.enableCors).toHaveBeenCalled();
-    expect(app.useStaticAssets).toHaveBeenCalledWith(uploadsDir, expect.objectContaining({ prefix: '/uploads' }));
+    expect(app.useStaticAssets).toHaveBeenCalledWith(
+      uploadsDir,
+      expect.objectContaining({ prefix: '/uploads' }),
+    );
     expect(existsSync(uploadsDir)).toBe(true);
     rmSync(dir, { recursive: true, force: true });
   });

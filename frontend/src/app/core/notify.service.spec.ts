@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-const confetti = vi.hoisted(() => vi.fn());
-vi.mock('canvas-confetti', () => ({ default: confetti }));
+import { CONFETTI, NotifyService } from './notify.service';
 
-import { NotifyService } from './notify.service';
+const confetti = vi.fn();
 
 describe('NotifyService', () => {
   beforeEach(() => {
     confetti.mockClear();
+    TestBed.configureTestingModule({ providers: [{ provide: CONFETTI, useValue: confetti }] });
     vi.useFakeTimers();
   });
   afterEach(() => vi.useRealTimers());

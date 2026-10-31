@@ -29,9 +29,19 @@ describe('GameGateway', () => {
       reveal: vi.fn(async () => undefined),
       finish: vi.fn(async () => undefined),
     };
-    realtime = { attach: vi.fn(), broadcastSession: vi.fn(async () => undefined), gamesChanged: vi.fn() };
-    const auth = { isAdminToken: vi.fn(async (t: unknown) => t === 'admin') } as unknown as AuthService;
-    gateway = new GameGateway(sessions as unknown as SessionsService, realtime as unknown as RealtimeService, auth);
+    realtime = {
+      attach: vi.fn(),
+      broadcastSession: vi.fn(async () => undefined),
+      gamesChanged: vi.fn(),
+    };
+    const auth = {
+      isAdminToken: vi.fn(async (t: unknown) => t === 'admin'),
+    } as unknown as AuthService;
+    gateway = new GameGateway(
+      sessions as unknown as SessionsService,
+      realtime as unknown as RealtimeService,
+      auth,
+    );
   });
 
   it('attaches the server and flags admins on connect', async () => {
@@ -57,26 +67,40 @@ describe('GameGateway', () => {
   });
 
   it('rejects invalid joins', async () => {
-    expect(await gateway.join(fakeSocket(), {} as never)).toEqual({ ok: false, error: 'Missing game or player' });
+    expect(await gateway.join(fakeSocket(), {} as never)).toEqual({
+      ok: false,
+      error: 'Missing game or player',
+    });
     sessions.isPlayerInSession.mockResolvedValue(false);
-    expect(await gateway.join(fakeSocket(), { sessionId: 's1', playerId: 'p1' })).toMatchObject({ ok: false });
+    expect(await gateway.join(fakeSocket(), { sessionId: 's1', playerId: 'p1' })).toMatchObject({
+      ok: false,
+    });
   });
 
   it('accepts answers only from joined gamers', async () => {
     const payload = { value: true };
-    expect(await gateway.answer(fakeSocket(), { sessionId: 's1', questionId: 'q', payload })).toEqual({
+    expect(
+      await gateway.answer(fakeSocket(), { sessionId: 's1', questionId: 'q', payload }),
+    ).toEqual({
       ok: false,
       error: 'Join the game first',
     });
     const joined = fakeSocket({ playerId: 'p1', sessionId: 's1' });
-    expect(await gateway.answer(joined, { sessionId: 's1', questionId: 'q', payload })).toEqual({ ok: true });
+    expect(await gateway.answer(joined, { sessionId: 's1', questionId: 'q', payload })).toEqual({
+      ok: true,
+    });
     expect(sessions.submitAnswer).toHaveBeenCalledWith('s1', 'p1', 'q', payload);
-    expect(await gateway.answer(joined, { sessionId: 's1', questionId: '', payload })).toMatchObject({ ok: false });
+    expect(
+      await gateway.answer(joined, { sessionId: 's1', questionId: '', payload }),
+    ).toMatchObject({ ok: false });
   });
 
   it('runs host controls for admins only', async () => {
     const admin = fakeSocket({ isAdmin: true });
-    expect(await gateway.start(fakeSocket(), { sessionId: 's1' })).toEqual({ ok: false, error: 'Admin login required' });
+    expect(await gateway.start(fakeSocket(), { sessionId: 's1' })).toEqual({
+      ok: false,
+      error: 'Admin login required',
+    });
     expect(await gateway.start(admin, { sessionId: 's1' })).toEqual({ ok: true });
     expect(realtime.gamesChanged).toHaveBeenCalled();
     await gateway.next(admin, { sessionId: 's1' });
@@ -94,7 +118,10 @@ describe('GameGateway', () => {
     const admin = fakeSocket({ isAdmin: true });
     expect(await gateway.watch(admin, { sessionId: 's1' })).toEqual({ ok: true });
     expect(admin.join).toHaveBeenCalledWith('session:s1');
-    expect(await gateway.watch(admin, { sessionId: 'nope' })).toEqual({ ok: false, error: 'Game not found' });
+    expect(await gateway.watch(admin, { sessionId: 'nope' })).toEqual({
+      ok: false,
+      error: 'Game not found',
+    });
   });
 
   it('updates the session when someone disconnects', async () => {
@@ -107,7 +134,10 @@ describe('GameGateway', () => {
 describe('toAck', () => {
   it('wraps results and friendly errors', async () => {
     expect(await toAck(async () => 5)).toEqual({ ok: true, data: 5 });
-    expect(await toAck(async () => Promise.reject(new ConflictException('Nope')))).toEqual({ ok: false, error: 'Nope' });
+    expect(await toAck(async () => Promise.reject(new ConflictException('Nope')))).toEqual({
+      ok: false,
+      error: 'Nope',
+    });
     const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     expect(await toAck(async () => Promise.reject(new Error('db down')))).toEqual({
       ok: false,

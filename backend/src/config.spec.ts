@@ -12,7 +12,13 @@ describe('loadConfig', () => {
 
   it('reads overrides from the environment', () => {
     const config = loadConfig(
-      { PORT: '4000', ADMIN_PASSWORD: '1234', JWT_SECRET: 's', DATABASE_URL: 'file:x.db', UPLOADS_DIR: 'up' },
+      {
+        PORT: '4000',
+        ADMIN_PASSWORD: '1234',
+        JWT_SECRET: 's',
+        DATABASE_URL: 'file:x.db',
+        UPLOADS_DIR: 'up',
+      },
       '/app/backend',
     );
     expect(config).toMatchObject({

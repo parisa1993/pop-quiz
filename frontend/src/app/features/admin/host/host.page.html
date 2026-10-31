@@ -4,7 +4,9 @@
     @if (state(); as s) {
       <h1 class="host__title">{{ s.quizTitle }}</h1>
     }
-    <span class="chip" [class.chip--off]="!connected()">{{ connected() ? '🟢 Live' : '🟠 Reconnecting…' }}</span>
+    <span class="chip" [class.chip--off]="!connected()">{{
+      connected() ? '🟢 Live' : '🟠 Reconnecting…'
+    }}</span>
   </header>
 
   @if (state(); as s) {
@@ -14,7 +16,9 @@
           <div class="glass lobby__join">
             <p class="on-dark-muted">Players, grab your phone and open</p>
             <p class="lobby__url">{{ joinUrl }}</p>
-            <p class="on-dark-muted">Pick a name, then tap <b>{{ s.quizTitle }}</b></p>
+            <p class="on-dark-muted">
+              Pick a name, then tap <b>{{ s.quizTitle }}</b>
+            </p>
           </div>
           <div class="lobby__count">
             <span class="lobby__num">{{ s.players.length }}</span>
@@ -27,7 +31,12 @@
               <li class="on-dark-muted">Waiting for the first player… 🎈</li>
             }
           </ul>
-          <button type="button" class="btn btn--yellow btn--lg lobby__start" [disabled]="busy() || s.players.length === 0" (click)="act('start')">
+          <button
+            type="button"
+            class="btn btn--yellow btn--lg lobby__start"
+            [disabled]="busy() || s.players.length === 0"
+            (click)="act('start')"
+          >
             🚀 Start the game
           </button>
           @if (s.players.length === 0) {
@@ -51,26 +60,45 @@
                 }
                 <div class="bars" aria-label="Answers so far">
                   @for (b of s.distribution; track b.key; let i = $index) {
-                    <div class="bar" [class.bar--correct]="s.revealed && b.correct" [class.bar--dim]="s.revealed && !b.correct && q.type !== 'POLL'">
+                    <div
+                      class="bar"
+                      [class.bar--correct]="s.revealed && b.correct"
+                      [class.bar--dim]="s.revealed && !b.correct && q.type !== 'POLL'"
+                    >
                       <span class="bar__label">
                         @if (b.imageUrl) {
                           <img [src]="b.imageUrl" alt="" class="bar__thumb" />
                         }
-                        <span class="shape" [style.background]="style(i).color" aria-hidden="true">{{ style(i).shape }}</span>
+                        <span
+                          class="shape"
+                          [style.background]="style(i).color"
+                          aria-hidden="true"
+                          >{{ style(i).shape }}</span
+                        >
                         {{ b.label }}
-                        @if (s.revealed && b.correct) { ✅ }
+                        @if (s.revealed && b.correct) {
+                          ✅
+                        }
                       </span>
                       <span class="bar__track">
-                        <span class="bar__fill" [style.width.%]="(b.count / maxBucket()) * 100" [style.background]="style(i).color"></span>
+                        <span
+                          class="bar__fill"
+                          [style.width.%]="(b.count / maxBucket()) * 100"
+                          [style.background]="style(i).color"
+                        ></span>
                       </span>
                       <span class="bar__count">{{ b.count }}</span>
                     </div>
                   }
                 </div>
                 @if (s.revealed) {
-                  <p class="answer pop-in">Answer: <b>{{ s.correctAnswerText }}</b></p>
+                  <p class="answer pop-in">
+                    Answer: <b>{{ s.correctAnswerText }}</b>
+                  </p>
                 } @else {
-                  <p class="muted answer-hidden">🔒 Answer: {{ s.correctAnswerText }} (only you can see this)</p>
+                  <p class="muted answer-hidden">
+                    🔒 Answer: {{ s.correctAnswerText }} (only you can see this)
+                  </p>
                 }
               </div>
             </div>
@@ -92,21 +120,53 @@
           </section>
 
           <nav class="controls" aria-label="Host controls">
-            <button type="button" class="btn btn--white" [disabled]="busy() || s.currentIndex === 0" (click)="act('prev')">← Back</button>
+            <button
+              type="button"
+              class="btn btn--white"
+              [disabled]="busy() || s.currentIndex === 0"
+              (click)="act('prev')"
+            >
+              ← Back
+            </button>
             @if (!s.revealed) {
-              <button type="button" class="btn btn--teal btn--lg" [disabled]="busy()" (click)="act('reveal')">👀 Reveal answer</button>
+              <button
+                type="button"
+                class="btn btn--teal btn--lg"
+                [disabled]="busy()"
+                (click)="act('reveal')"
+              >
+                👀 Reveal answer
+              </button>
             }
             @if (isLast()) {
-              <app-confirm-button buttonClass="btn btn--pink btn--lg" question="End the game?" yesLabel="Finish 🏁" (confirmed)="act('finish')">
+              <app-confirm-button
+                buttonClass="btn btn--pink btn--lg"
+                question="End the game?"
+                yesLabel="Finish 🏁"
+                (confirmed)="act('finish')"
+              >
                 🏁 Finish &amp; show winners
               </app-confirm-button>
             } @else {
-              <button type="button" class="btn btn--yellow btn--lg" [disabled]="busy()" (click)="act('next')">Next →</button>
+              <button
+                type="button"
+                class="btn btn--yellow btn--lg"
+                [disabled]="busy()"
+                (click)="act('next')"
+              >
+                Next →
+              </button>
             }
           </nav>
           @if (!isLast()) {
             <div class="end-early">
-              <app-confirm-button buttonClass="link-btn" question="End the game now?" yesLabel="Finish" (confirmed)="act('finish')">End game early</app-confirm-button>
+              <app-confirm-button
+                buttonClass="link-btn"
+                question="End the game now?"
+                yesLabel="Finish"
+                (confirmed)="act('finish')"
+                >End game early</app-confirm-button
+              >
             </div>
           }
         }
@@ -127,7 +187,12 @@
             }
           </ol>
           <div class="row finished__actions">
-            <a class="btn btn--white" [routerLink]="['/admin/quizzes', s.quizId, 'results']" [queryParams]="{ session: s.sessionId }">See full results</a>
+            <a
+              class="btn btn--white"
+              [routerLink]="['/admin/quizzes', s.quizId, 'results']"
+              [queryParams]="{ session: s.sessionId }"
+              >See full results</a
+            >
             <a class="btn btn--ghost" routerLink="/admin/quizzes">Back to quizzes</a>
           </div>
         </section>

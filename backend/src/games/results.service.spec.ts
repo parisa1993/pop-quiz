@@ -33,7 +33,11 @@ describe('ResultsService', () => {
     await sessions.finish(sessionId);
 
     const result = await results.getResults(sessionId);
-    expect(result.session).toMatchObject({ quizTitle: 'Birthday', status: 'FINISHED', playerCount: 2 });
+    expect(result.session).toMatchObject({
+      quizTitle: 'Birthday',
+      status: 'FINISHED',
+      playerCount: 2,
+    });
     expect(result.leaderboard.map((p) => [p.username, p.score, p.rank])).toEqual([
       ['Ann', 300, 1],
       ['Ben', 0, 2],

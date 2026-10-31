@@ -5,7 +5,8 @@ const QUIZ_TITLE = 'Birthday Bash';
 
 /** Set E2E_SCREENSHOTS=1 to save a visual tour of every screen to test-results/screens. */
 async function shot(page: Page, name: string): Promise<void> {
-  if (process.env['E2E_SCREENSHOTS']) await page.screenshot({ path: `test-results/screens/${name}.png`, fullPage: true });
+  if (process.env['E2E_SCREENSHOTS'])
+    await page.screenshot({ path: `test-results/screens/${name}.png`, fullPage: true });
 }
 
 async function newPhone(browser: Browser): Promise<Page> {
@@ -22,7 +23,11 @@ async function dragTo(page: Page, handle: Locator, target: Locator): Promise<voi
   await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
   await page.mouse.down();
   for (let step = 1; step <= 12; step++) {
-    await page.mouse.move(from.x + from.width / 2, from.y + ((to.y + to.height / 2 - from.y) * step) / 12, { steps: 2 });
+    await page.mouse.move(
+      from.x + from.width / 2,
+      from.y + ((to.y + to.height / 2 - from.y) * step) / 12,
+      { steps: 2 },
+    );
   }
   await page.mouse.up();
 }
@@ -37,7 +42,10 @@ async function joinAsGamer(page: Page, name: string): Promise<void> {
   await expect(page.getByText(`You're in, ${name}!`)).toBeVisible();
 }
 
-test('admin builds a quiz and two gamers play it live from their phones', async ({ page: admin, browser }) => {
+test('admin builds a quiz and two gamers play it live from their phones', async ({
+  page: admin,
+  browser,
+}) => {
   // ---------- Admin logs in ----------
   await admin.goto('/');
   await shot(admin, '01-home');

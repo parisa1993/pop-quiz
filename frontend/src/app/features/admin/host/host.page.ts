@@ -57,8 +57,12 @@ export class HostPage implements OnInit {
   protected readonly rankLabel = rankLabel;
   protected readonly joinUrl = `${location.origin}`;
 
-  protected readonly onlineCount = computed(() => this.state()?.players.filter((p) => p.connected).length ?? 0);
-  protected readonly maxBucket = computed(() => Math.max(1, ...(this.state()?.distribution.map((b) => b.count) ?? [])));
+  protected readonly onlineCount = computed(
+    () => this.state()?.players.filter((p) => p.connected).length ?? 0,
+  );
+  protected readonly maxBucket = computed(() =>
+    Math.max(1, ...(this.state()?.distribution.map((b) => b.count) ?? [])),
+  );
   protected readonly isLast = computed(() => {
     const s = this.state();
     return !!s && s.currentIndex >= s.totalQuestions - 1;
@@ -78,7 +82,8 @@ export class HostPage implements OnInit {
       .subscribe((next) => {
         const prev = this.state();
         this.state.set(next);
-        if (prev && prev.status !== 'FINISHED' && next.status === 'FINISHED') this.notify.celebrate(true);
+        if (prev && prev.status !== 'FINISHED' && next.status === 'FINISHED')
+          this.notify.celebrate(true);
       });
   }
 

@@ -1,5 +1,10 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import confetti from 'canvas-confetti';
+
+export const CONFETTI = new InjectionToken<typeof confetti>('CONFETTI', {
+  providedIn: 'root',
+  factory: () => confetti,
+});
 
 type Cue = 'start' | 'question' | 'correct' | 'wrong' | 'finish';
 
@@ -22,6 +27,7 @@ const VIBRATION: Record<Cue, number[]> = {
 /** In-app "push" feedback: a tiny chime, a buzz on phones and confetti. */
 @Injectable({ providedIn: 'root' })
 export class NotifyService {
+  private readonly confetti = inject(CONFETTI);
   private audio: AudioContext | null = null;
 
   cue(cue: Cue): void {
@@ -32,10 +38,35 @@ export class NotifyService {
   celebrate(big = false): void {
     if (this.reducedMotion()) return;
     const colors = ['#ff4f8b', '#ffc93c', '#13b394', '#3d7bff', '#ffffff'];
-    void confetti({ particleCount: big ? 160 : 70, spread: big ? 100 : 70, origin: { y: 0.65 }, colors });
+    void this.confetti({
+      particleCount: big ? 160 : 70,
+      spread: big ? 100 : 70,
+      origin: { y: 0.65 },
+      colors,
+    });
     if (big) {
-      setTimeout(() => void confetti({ particleCount: 90, angle: 60, spread: 70, origin: { x: 0 }, colors }), 250);
-      setTimeout(() => void confetti({ particleCount: 90, angle: 120, spread: 70, origin: { x: 1 }, colors }), 400);
+      setTimeout(
+        () =>
+          void this.confetti({
+            particleCount: 90,
+            angle: 60,
+            spread: 70,
+            origin: { x: 0 },
+            colors,
+          }),
+        250,
+      );
+      setTimeout(
+        () =>
+          void this.confetti({
+            particleCount: 90,
+            angle: 120,
+            spread: 70,
+            origin: { x: 1 },
+            colors,
+          }),
+        400,
+      );
     }
   }
 
@@ -49,7 +80,9 @@ export class NotifyService {
 
   private beep(frequencies: number[]): void {
     try {
-      const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ??
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       this.audio ??= new AudioCtx();
       const ctx = this.audio;

@@ -46,7 +46,10 @@ describe('PickNamePage', () => {
   });
 
   it('shows a friendly error when the name is taken', async () => {
-    const taken = new HttpErrorResponse({ status: 409, error: { message: '"Ana" is already taken' } });
+    const taken = new HttpErrorResponse({
+      status: 409,
+      error: { message: '"Ana" is already taken' },
+    });
     const { el, type, submit } = await setup(vi.fn().mockRejectedValue(taken));
     await type('Ana');
     await submit();

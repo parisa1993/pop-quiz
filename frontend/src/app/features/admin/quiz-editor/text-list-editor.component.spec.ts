@@ -2,7 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { TextItem, TextListEditorComponent } from './text-list-editor.component';
 
 describe('TextListEditorComponent', () => {
-  async function setup(items: TextItem[], options: { min?: number; max?: number; draggable?: boolean } = {}) {
+  async function setup(
+    items: TextItem[],
+    options: { min?: number; max?: number; draggable?: boolean } = {},
+  ) {
     const fixture = TestBed.createComponent(TextListEditorComponent);
     fixture.componentRef.setInput('items', items);
     for (const [key, value] of Object.entries(options)) fixture.componentRef.setInput(key, value);

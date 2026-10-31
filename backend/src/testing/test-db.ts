@@ -12,7 +12,9 @@ function migrationStatements(): string[] {
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
     .sort()
-    .flatMap((dir) => readFileSync(path.join(migrationsDir, dir, 'migration.sql'), 'utf8').split(';'))
+    .flatMap((dir) =>
+      readFileSync(path.join(migrationsDir, dir, 'migration.sql'), 'utf8').split(';'),
+    )
     .map((s) => s.replace(/^\s*--.*$/gm, '').trim())
     .filter(Boolean);
 }

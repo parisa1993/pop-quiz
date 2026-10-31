@@ -12,7 +12,10 @@ describe('ImageUploadComponent', () => {
       providers: [
         provideApiMock(api),
         { provide: ToastService, useValue: toast },
-        { provide: ImageResizeService, useValue: { resize: async (f: File) => ({ blob: f, name: f.name }) } },
+        {
+          provide: ImageResizeService,
+          useValue: { resize: async (f: File) => ({ blob: f, name: f.name }) },
+        },
       ],
     });
     const fixture = TestBed.createComponent(ImageUploadComponent);
@@ -49,7 +52,9 @@ describe('ImageUploadComponent', () => {
     const { fixture, changed } = setup();
     fixture.componentRef.setInput('url', '/uploads/a.png');
     await fixture.whenStable();
-    expect((fixture.nativeElement.querySelector('img') as HTMLImageElement).getAttribute('src')).toBe('/uploads/a.png');
+    expect(
+      (fixture.nativeElement.querySelector('img') as HTMLImageElement).getAttribute('src'),
+    ).toBe('/uploads/a.png');
     (fixture.nativeElement.querySelector('.upload__remove') as HTMLButtonElement).click();
     expect(changed).toHaveBeenCalledWith(null);
   });

@@ -19,6 +19,9 @@ describe('fixtures', () => {
       ['TRUE_FALSE', 0],
       ['SINGLE_CHOICE', 1],
     ]);
-    expect(await seedPlayer(db.prisma, 'Ann')).toMatchObject({ username: 'Ann', usernameKey: 'ann' });
+    expect(await seedPlayer(db.prisma, 'Ann')).toMatchObject({
+      username: 'Ann',
+      usernameKey: 'ann',
+    });
   });
 });

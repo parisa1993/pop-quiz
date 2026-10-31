@@ -45,7 +45,9 @@ describe('HostPage', () => {
       await fixture.whenStable();
     };
     const click = async (text: string) => {
-      const button = [...el.querySelectorAll('button')].find((b) => b.textContent?.includes(text)) as HTMLButtonElement;
+      const button = [...el.querySelectorAll('button')].find((b) =>
+        b.textContent?.includes(text),
+      ) as HTMLButtonElement;
       button.click();
       await flush();
       await fixture.whenStable();

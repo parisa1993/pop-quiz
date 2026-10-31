@@ -8,9 +8,16 @@ import { AdminAuthService } from '../../core/admin-auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="bar">
-      <a routerLink="/admin/quizzes" class="bar__brand">🎉 Pop Quiz <span class="badge">Admin</span></a>
+      <a routerLink="/admin/quizzes" class="bar__brand"
+        >🎉 Pop Quiz <span class="badge">Admin</span></a
+      >
       <nav class="bar__nav">
-        <a routerLink="/admin/quizzes" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Quizzes</a>
+        <a
+          routerLink="/admin/quizzes"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Quizzes</a
+        >
         <button type="button" class="link-btn" (click)="logout()">Log out</button>
       </nav>
     </header>
@@ -39,9 +46,21 @@ import { AdminAuthService } from '../../core/admin-auth.service';
       align-items: center;
       gap: var(--space-2);
     }
-    .bar__nav { display: flex; align-items: center; gap: var(--space-3); font-weight: 700; }
-    .bar__nav a { text-decoration: none; opacity: 0.8; }
-    .bar__nav a.is-active { opacity: 1; text-decoration: underline; text-underline-offset: 6px; }
+    .bar__nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-weight: 700;
+    }
+    .bar__nav a {
+      text-decoration: none;
+      opacity: 0.8;
+    }
+    .bar__nav a.is-active {
+      opacity: 1;
+      text-decoration: underline;
+      text-underline-offset: 6px;
+    }
   `,
 })
 export class AdminLayoutComponent {

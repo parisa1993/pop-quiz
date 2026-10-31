@@ -7,7 +7,9 @@ import { HomePage } from './home.page';
 describe('HomePage', () => {
   async function setup(player: { id: string; username: string } | null, sessionId: string | null) {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([]), provideApiMock(createApiMock())] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideApiMock(createApiMock())],
+    });
     const players = TestBed.inject(PlayerSessionService);
     players.player.set(player);
     players.sessionId.set(sessionId);

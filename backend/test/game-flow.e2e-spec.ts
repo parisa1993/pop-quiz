@@ -52,9 +52,15 @@ describe('Pop Quiz full game flow (e2e)', () => {
       .send({ title: '  Parisa’s Birthday Bash  ', description: 'How well do you know her?' })
       .expect(201);
     quiz = created.body;
-    expect(quiz).toMatchObject({ title: 'Parisa’s Birthday Bash', enabled: false, questionCount: 0 });
+    expect(quiz).toMatchObject({
+      title: 'Parisa’s Birthday Bash',
+      enabled: false,
+      questionCount: 0,
+    });
 
-    const upload = await admin(http().post('/api/admin/uploads')).attach('file', TINY_PNG, 'cake.png').expect(201);
+    const upload = await admin(http().post('/api/admin/uploads'))
+      .attach('file', TINY_PNG, 'cake.png')
+      .expect(201);
     const imageUrl: string = upload.body.url;
     await http().get(imageUrl).expect(200);
     await admin(http().post('/api/admin/uploads'))
@@ -100,7 +106,11 @@ describe('Pop Quiz full game flow (e2e)', () => {
           correctOptionId: 'd2',
         },
       },
-      { type: 'TYPE_ANSWER', text: 'Her favourite band?', config: { acceptedAnswers: ['Coldplay'] } },
+      {
+        type: 'TYPE_ANSWER',
+        text: 'Her favourite band?',
+        config: { acceptedAnswers: ['Coldplay'] },
+      },
       {
         type: 'ORDERING',
         text: 'Order these trips',
@@ -112,7 +122,11 @@ describe('Pop Quiz full game flow (e2e)', () => {
           ],
         },
       },
-      { type: 'NUMBER_GUESS', text: 'How old is she?', config: { correct: 30, tolerance: 1, unit: 'years' } },
+      {
+        type: 'NUMBER_GUESS',
+        text: 'How old is she?',
+        config: { correct: 30, tolerance: 1, unit: 'years' },
+      },
       {
         type: 'POLL',
         text: 'Best party snack?',
@@ -125,7 +139,9 @@ describe('Pop Quiz full game flow (e2e)', () => {
       },
     ];
     for (const input of inputs) {
-      await admin(http().post(`/api/admin/quizzes/${quiz.id}/questions`)).send(input).expect(201);
+      await admin(http().post(`/api/admin/quizzes/${quiz.id}/questions`))
+        .send(input)
+        .expect(201);
     }
 
     const invalid = await admin(http().post(`/api/admin/quizzes/${quiz.id}/questions`))
@@ -140,7 +156,12 @@ describe('Pop Quiz full game flow (e2e)', () => {
 
   it('edits, reorders and deletes questions', async () => {
     const edited = await admin(http().patch(`/api/admin/questions/${questions[2].id}`))
-      .send({ type: 'TRUE_FALSE', text: 'She loves coffee', points: 150, config: { correct: true } })
+      .send({
+        type: 'TRUE_FALSE',
+        text: 'She loves coffee',
+        points: 150,
+        config: { correct: true },
+      })
       .expect(200);
     expect(edited.body).toMatchObject({ text: 'She loves coffee', points: 150 });
 
@@ -152,7 +173,9 @@ describe('Pop Quiz full game flow (e2e)', () => {
     // Move the true/false question to the front.
     const ids = questions.map((q) => q.id);
     const reordered = [ids[2], ...ids.filter((id) => id !== ids[2])];
-    await admin(http().put(`/api/admin/quizzes/${quiz.id}/questions/order`)).send({ ids: ids.slice(1) }).expect(400);
+    await admin(http().put(`/api/admin/quizzes/${quiz.id}/questions/order`))
+      .send({ ids: ids.slice(1) })
+      .expect(400);
     const res = await admin(http().put(`/api/admin/quizzes/${quiz.id}/questions/order`))
       .send({ ids: reordered })
       .expect(200);
@@ -163,7 +186,9 @@ describe('Pop Quiz full game flow (e2e)', () => {
 
   it('only shows enabled quizzes to gamers', async () => {
     expect((await http().get('/api/games').expect(200)).body).toEqual([]);
-    await admin(http().patch(`/api/admin/quizzes/${quiz.id}`)).send({ enabled: true }).expect(200);
+    await admin(http().patch(`/api/admin/quizzes/${quiz.id}`))
+      .send({ enabled: true })
+      .expect(200);
     const games = (await http().get('/api/games').expect(200)).body;
     expect(games).toEqual([
       expect.objectContaining({ quizId: quiz.id, questionCount: 8, session: null }),
@@ -180,8 +205,14 @@ describe('Pop Quiz full game flow (e2e)', () => {
   });
 
   it('lets gamers join the same lobby', async () => {
-    const a = await http().post(`/api/games/${quiz.id}/join`).send({ playerId: alice.id }).expect(200);
-    const b = await http().post(`/api/games/${quiz.id}/join`).send({ playerId: bob.id }).expect(200);
+    const a = await http()
+      .post(`/api/games/${quiz.id}/join`)
+      .send({ playerId: alice.id })
+      .expect(200);
+    const b = await http()
+      .post(`/api/games/${quiz.id}/join`)
+      .send({ playerId: bob.id })
+      .expect(200);
     sessionId = a.body.sessionId;
     expect(b.body.sessionId).toBe(sessionId);
     await http().post(`/api/games/${quiz.id}/join`).send({ playerId: 'ghost' }).expect(404);
@@ -199,8 +230,12 @@ describe('Pop Quiz full game flow (e2e)', () => {
     aliceState = new StateRecorder(aliceSocket);
     bobState = new StateRecorder(bobSocket);
 
-    expect(await emitAck(adminSocket, ClientEvents.AdminWatch, { sessionId })).toEqual({ ok: true });
-    expect(await emitAck(aliceSocket, ClientEvents.PlayerJoin, { sessionId, playerId: alice.id })).toEqual({
+    expect(await emitAck(adminSocket, ClientEvents.AdminWatch, { sessionId })).toEqual({
+      ok: true,
+    });
+    expect(
+      await emitAck(aliceSocket, ClientEvents.PlayerJoin, { sessionId, playerId: alice.id }),
+    ).toEqual({
       ok: true,
     });
     const lobby = await aliceState.waitFor((s) => s.status === 'LOBBY');
@@ -212,7 +247,12 @@ describe('Pop Quiz full game flow (e2e)', () => {
     expect(hostLobby.players.map((p) => p.username)).toEqual(['Alice', 'Bob']);
 
     // Wrong session or non-admin actions are refused.
-    expect(await emitAck(aliceSocket, ClientEvents.PlayerJoin, { sessionId: 'nope', playerId: alice.id })).toMatchObject({
+    expect(
+      await emitAck(aliceSocket, ClientEvents.PlayerJoin, {
+        sessionId: 'nope',
+        playerId: alice.id,
+      }),
+    ).toMatchObject({
       ok: false,
     });
     expect(await emitAck(aliceSocket, ClientEvents.AdminStart, { sessionId })).toEqual({
@@ -229,7 +269,9 @@ describe('Pop Quiz full game flow (e2e)', () => {
   });
 
   it('starts the game and unlocks question 1 for everyone, without leaking answers', async () => {
-    expect(await emitAck(adminSocket, ClientEvents.AdminStart, { sessionId })).toEqual({ ok: true });
+    expect(await emitAck(adminSocket, ClientEvents.AdminStart, { sessionId })).toEqual({
+      ok: true,
+    });
     const a = await aliceState.waitFor((s) => s.status === 'IN_PROGRESS');
     const b = await bobState.waitFor((s) => s.status === 'IN_PROGRESS');
     expect(a.currentIndex).toBe(0);
@@ -246,21 +288,47 @@ describe('Pop Quiz full game flow (e2e)', () => {
 
   it('stores answers immediately and shows live progress to the host', async () => {
     const q = questions[0].id;
-    expect(await emitAck(aliceSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: q, payload: { value: true } })).toEqual({
+    expect(
+      await emitAck(aliceSocket, ClientEvents.PlayerAnswer, {
+        sessionId,
+        questionId: q,
+        payload: { value: true },
+      }),
+    ).toEqual({
       ok: true,
     });
-    expect(await emitAck(aliceSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: q, payload: { value: false } })).toEqual({
+    expect(
+      await emitAck(aliceSocket, ClientEvents.PlayerAnswer, {
+        sessionId,
+        questionId: q,
+        payload: { value: false },
+      }),
+    ).toEqual({
       ok: false,
       error: 'You already answered this question',
     });
     expect(
-      await emitAck(bobSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: questions[1].id, payload: {} }),
+      await emitAck(bobSocket, ClientEvents.PlayerAnswer, {
+        sessionId,
+        questionId: questions[1].id,
+        payload: {},
+      }),
     ).toMatchObject({ ok: false, error: 'This question is closed. Follow the host!' });
-    expect(await emitAck(bobSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: q, payload: { value: 'x' } })).toEqual({
+    expect(
+      await emitAck(bobSocket, ClientEvents.PlayerAnswer, {
+        sessionId,
+        questionId: q,
+        payload: { value: 'x' },
+      }),
+    ).toEqual({
       ok: false,
       error: 'That answer is not valid',
     });
-    await emitAck(bobSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: q, payload: { value: false } });
+    await emitAck(bobSocket, ClientEvents.PlayerAnswer, {
+      sessionId,
+      questionId: q,
+      payload: { value: false },
+    });
 
     const stored = await server.db.prisma.answer.findMany({ where: { sessionId } });
     expect(stored).toHaveLength(2);
@@ -305,7 +373,9 @@ describe('Pop Quiz full game flow (e2e)', () => {
 
   it('resumes a gamer who closed the app at the current question', async () => {
     bobSocket.disconnect();
-    const hostSeesOffline = await host.waitFor((s) => s.players.some((p) => p.username === 'Bob' && !p.connected));
+    const hostSeesOffline = await host.waitFor((s) =>
+      s.players.some((p) => p.username === 'Bob' && !p.connected),
+    );
     expect(hostSeesOffline).toBeTruthy();
 
     bobSocket = await connect(server.url);
@@ -333,10 +403,27 @@ describe('Pop Quiz full game flow (e2e)', () => {
       const question = questions[index];
       await aliceState.waitFor((s) => s.currentIndex === index);
       const [forAlice, forBob] = answers[question.type];
-      expect((await emitAck(aliceSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: question.id, payload: forAlice })).ok).toBe(true);
-      expect((await emitAck(bobSocket, ClientEvents.PlayerAnswer, { sessionId, questionId: question.id, payload: forBob })).ok).toBe(true);
+      expect(
+        (
+          await emitAck(aliceSocket, ClientEvents.PlayerAnswer, {
+            sessionId,
+            questionId: question.id,
+            payload: forAlice,
+          })
+        ).ok,
+      ).toBe(true);
+      expect(
+        (
+          await emitAck(bobSocket, ClientEvents.PlayerAnswer, {
+            sessionId,
+            questionId: question.id,
+            payload: forBob,
+          })
+        ).ok,
+      ).toBe(true);
       await emitAck(adminSocket, ClientEvents.AdminReveal, { sessionId });
-      if (index < questions.length - 1) await emitAck(adminSocket, ClientEvents.AdminNext, { sessionId });
+      if (index < questions.length - 1)
+        await emitAck(adminSocket, ClientEvents.AdminNext, { sessionId });
     }
     expect(await emitAck(adminSocket, ClientEvents.AdminNext, { sessionId })).toEqual({
       ok: false,
@@ -354,9 +441,20 @@ describe('Pop Quiz full game flow (e2e)', () => {
     expect(b.final).toMatchObject({ rank: 2, score: 200 });
     expect(a.final?.podium.map((p) => p.username)).toEqual(['Alice', 'Bob']);
 
-    const results = (await admin(http().get(`/api/admin/sessions/${sessionId}/results`)).expect(200)).body;
-    expect(results.session).toMatchObject({ status: 'FINISHED', quizTitle: 'Parisa’s Birthday Bash', playerCount: 2 });
-    expect(results.leaderboard[0]).toMatchObject({ username: 'Alice', score: 850, correctCount: 7, answeredCount: 7 });
+    const results = (
+      await admin(http().get(`/api/admin/sessions/${sessionId}/results`)).expect(200)
+    ).body;
+    expect(results.session).toMatchObject({
+      status: 'FINISHED',
+      quizTitle: 'Parisa’s Birthday Bash',
+      playerCount: 2,
+    });
+    expect(results.leaderboard[0]).toMatchObject({
+      username: 'Alice',
+      score: 850,
+      correctCount: 7,
+      answeredCount: 7,
+    });
     expect(results.answers).toHaveLength(16);
     expect(results.answers).toContainEqual(
       expect.objectContaining({ playerId: bob.id, answerText: 'Muse', isCorrect: false }),
@@ -364,13 +462,15 @@ describe('Pop Quiz full game flow (e2e)', () => {
 
     const list = (await admin(http().get('/api/admin/quizzes')).expect(200)).body;
     expect(list[0]).toMatchObject({ playerCount: 2, sessionCount: 1, activeSession: null });
-    const sessions = (await admin(http().get(`/api/admin/quizzes/${quiz.id}/sessions`)).expect(200)).body;
+    const sessions = (await admin(http().get(`/api/admin/quizzes/${quiz.id}/sessions`)).expect(200))
+      .body;
     expect(sessions).toHaveLength(1);
     expect((await http().get('/api/games')).body[0].session).toBeNull();
   });
 
   it('opens a fresh lobby for the next round and can delete the quiz', async () => {
-    const opened = (await admin(http().post(`/api/admin/quizzes/${quiz.id}/sessions`)).expect(201)).body;
+    const opened = (await admin(http().post(`/api/admin/quizzes/${quiz.id}/sessions`)).expect(201))
+      .body;
     expect(opened.id).not.toBe(sessionId);
     expect(opened.status).toBe('LOBBY');
     await admin(http().delete(`/api/admin/quizzes/${quiz.id}`)).expect(204);

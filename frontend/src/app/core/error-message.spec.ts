@@ -3,8 +3,12 @@ import { errorMessage } from './error-message';
 
 describe('errorMessage', () => {
   it('uses the API message', () => {
-    expect(errorMessage(new HttpErrorResponse({ status: 409, error: { message: 'Name taken' } }))).toBe('Name taken');
-    expect(errorMessage(new HttpErrorResponse({ status: 400, error: { message: ['A', 'B'] } }))).toBe('A. B');
+    expect(
+      errorMessage(new HttpErrorResponse({ status: 409, error: { message: 'Name taken' } })),
+    ).toBe('Name taken');
+    expect(
+      errorMessage(new HttpErrorResponse({ status: 400, error: { message: ['A', 'B'] } })),
+    ).toBe('A. B');
   });
 
   it('explains network failures', () => {

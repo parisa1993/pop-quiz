@@ -16,7 +16,10 @@ export class AuthService {
     if (typeof password !== 'string' || !this.passwordMatches(password)) {
       throw new UnauthorizedException('Wrong password');
     }
-    return this.jwt.signAsync({ role: ADMIN_ROLE }, { secret: this.config.jwtSecret, expiresIn: '7d' });
+    return this.jwt.signAsync(
+      { role: ADMIN_ROLE },
+      { secret: this.config.jwtSecret, expiresIn: '7d' },
+    );
   }
 
   async isAdminToken(token: unknown): Promise<boolean> {

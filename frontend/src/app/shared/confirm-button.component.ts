@@ -12,7 +12,12 @@ import { ChangeDetectionStrategy, Component, input, output, signal } from '@angu
         <button type="button" class="btn btn--soft" (click)="asking.set(false)">Cancel</button>
       </span>
     } @else {
-      <button type="button" [class]="buttonClass()" [disabled]="disabled()" (click)="asking.set(true)">
+      <button
+        type="button"
+        [class]="buttonClass()"
+        [disabled]="disabled()"
+        (click)="asking.set(true)"
+      >
         <ng-content />
       </button>
     }

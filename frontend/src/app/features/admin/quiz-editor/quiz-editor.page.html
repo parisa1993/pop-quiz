@@ -20,62 +20,143 @@
         <div>
           <label class="field">
             <span>Title</span>
-            <input class="input" maxlength="120" placeholder="e.g. How well do you know Parisa?" [value]="details().title" (input)="patchDetails({ title: $any($event.target).value })" />
+            <input
+              class="input"
+              maxlength="120"
+              placeholder="e.g. How well do you know Parisa?"
+              [value]="details().title"
+              (input)="patchDetails({ title: $any($event.target).value })"
+            />
           </label>
           <label class="field">
             <span>Description (optional)</span>
-            <textarea class="input" rows="2" maxlength="1000" placeholder="A little teaser for the players" [value]="details().description ?? ''" (input)="patchDetails({ description: $any($event.target).value })"></textarea>
+            <textarea
+              class="input"
+              rows="2"
+              maxlength="1000"
+              placeholder="A little teaser for the players"
+              [value]="details().description ?? ''"
+              (input)="patchDetails({ description: $any($event.target).value })"
+            ></textarea>
           </label>
         </div>
         <div class="field">
           <span>Cover picture (optional)</span>
-          <app-image-upload [url]="details().coverImageUrl" label="Add a cover" (changed)="patchDetails({ coverImageUrl: $event })" />
+          <app-image-upload
+            [url]="details().coverImageUrl"
+            label="Add a cover"
+            (changed)="patchDetails({ coverImageUrl: $event })"
+          />
         </div>
       </div>
 
       <div class="row details__actions">
         @if (!isNew()) {
-          <button type="button" class="btn btn--pink" [disabled]="questions().length === 0" (click)="host()">▶ Host game</button>
+          <button
+            type="button"
+            class="btn btn--pink"
+            [disabled]="questions().length === 0"
+            (click)="host()"
+          >
+            ▶ Host game
+          </button>
           <a class="btn btn--soft" [routerLink]="['/admin/quizzes', id(), 'results']">🏆 Results</a>
         }
         <span class="spacer"></span>
         <button class="btn btn--teal" [disabled]="savingDetails() || (!isNew() && !detailsDirty())">
-          {{ isNew() ? 'Create quiz & add questions →' : savingDetails() ? 'Saving…' : 'Save details' }}
+          {{
+            isNew() ? 'Create quiz & add questions →' : savingDetails() ? 'Saving…' : 'Save details'
+          }}
         </button>
       </div>
     </form>
 
     @if (quiz(); as q) {
       @if (locked()) {
-        <p class="banner" role="status">🔴 This quiz is being played right now. Editing questions is locked until the game ends.</p>
+        <p class="banner" role="status">
+          🔴 This quiz is being played right now. Editing questions is locked until the game ends.
+        </p>
       }
 
       <section class="questions">
         <div class="row row--between questions__head">
-          <h2>Questions <span class="badge">{{ questions().length }}</span></h2>
-          <button type="button" class="btn btn--yellow" [disabled]="locked()" (click)="editing.set('new')">＋ Add question</button>
+          <h2>
+            Questions <span class="badge">{{ questions().length }}</span>
+          </h2>
+          <button
+            type="button"
+            class="btn btn--yellow"
+            [disabled]="locked()"
+            (click)="editing.set('new')"
+          >
+            ＋ Add question
+          </button>
         </div>
 
         @if (questions().length) {
           <p class="on-dark-muted">Drag ⠿ to change the order. Players see them top to bottom.</p>
-          <ol class="qlist" cdkDropList [cdkDropListDisabled]="locked()" (cdkDropListDropped)="drop($event)">
+          <ol
+            class="qlist"
+            cdkDropList
+            [cdkDropListDisabled]="locked()"
+            (cdkDropListDropped)="drop($event)"
+          >
             @for (question of questions(); track question.id; let i = $index) {
               <li class="qitem card card--flat" cdkDrag cdkDragLockAxis="y">
-                <button type="button" class="drag-handle" cdkDragHandle aria-label="Drag to reorder">⠿</button>
+                <button
+                  type="button"
+                  class="drag-handle"
+                  cdkDragHandle
+                  aria-label="Drag to reorder"
+                >
+                  ⠿
+                </button>
                 <span class="qitem__num">{{ i + 1 }}</span>
-                <button type="button" class="qitem__main" (click)="editing.set(question)" [disabled]="locked()">
-                  <span class="qitem__type">{{ info[question.type].icon }} {{ info[question.type].label }}</span>
+                <button
+                  type="button"
+                  class="qitem__main"
+                  (click)="editing.set(question)"
+                  [disabled]="locked()"
+                >
+                  <span class="qitem__type"
+                    >{{ info[question.type].icon }} {{ info[question.type].label }}</span
+                  >
                   <span class="qitem__text">{{ question.text }}</span>
                 </button>
                 @if (question.imageUrl) {
                   <img class="qitem__thumb" [src]="question.imageUrl" alt="" />
                 }
-                <span class="badge qitem__points">{{ question.type === 'POLL' ? 'poll' : question.points + ' pts' }}</span>
+                <span class="badge qitem__points">{{
+                  question.type === 'POLL' ? 'poll' : question.points + ' pts'
+                }}</span>
                 <span class="qitem__actions">
-                  <button type="button" class="icon-btn" (click)="editing.set(question)" [disabled]="locked()" aria-label="Edit question">✏️</button>
-                  <button type="button" class="icon-btn" (click)="duplicate(question)" [disabled]="locked()" aria-label="Duplicate question">⧉</button>
-                  <app-confirm-button buttonClass="icon-btn" question="Delete?" yesLabel="Delete" [disabled]="locked()" (confirmed)="remove(question)">
-                    <span aria-hidden="true">🗑️</span><span class="visually-hidden">Delete question</span>
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    (click)="editing.set(question)"
+                    [disabled]="locked()"
+                    aria-label="Edit question"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    (click)="duplicate(question)"
+                    [disabled]="locked()"
+                    aria-label="Duplicate question"
+                  >
+                    ⧉
+                  </button>
+                  <app-confirm-button
+                    buttonClass="icon-btn"
+                    question="Delete?"
+                    yesLabel="Delete"
+                    [disabled]="locked()"
+                    (confirmed)="remove(question)"
+                  >
+                    <span aria-hidden="true">🗑️</span
+                    ><span class="visually-hidden">Delete question</span>
                   </app-confirm-button>
                 </span>
               </li>
@@ -85,8 +166,12 @@
           <div class="glass empty">
             <span class="empty__emoji" aria-hidden="true">📝</span>
             <h3>No questions yet</h3>
-            <p class="on-dark-muted">Mix it up: multiple choice, pictures, true/false, put-in-order and more.</p>
-            <button type="button" class="btn btn--yellow btn--lg" (click)="editing.set('new')">＋ Add the first question</button>
+            <p class="on-dark-muted">
+              Mix it up: multiple choice, pictures, true/false, put-in-order and more.
+            </p>
+            <button type="button" class="btn btn--yellow btn--lg" (click)="editing.set('new')">
+              ＋ Add the first question
+            </button>
           </div>
         }
       </section>
@@ -94,12 +179,24 @@
   }
 
   @if (editing(); as current) {
-    <div class="sheet" role="dialog" aria-modal="true" [attr.aria-label]="current === 'new' ? 'New question' : 'Edit question'">
-      <button type="button" class="sheet__backdrop" aria-label="Close" (click)="editing.set(null)"></button>
+    <div
+      class="sheet"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="current === 'new' ? 'New question' : 'Edit question'"
+    >
+      <button
+        type="button"
+        class="sheet__backdrop"
+        aria-label="Close"
+        (click)="editing.set(null)"
+      ></button>
       <div class="sheet__panel card pop-in">
         <div class="row row--between sheet__head">
           <h2>{{ current === 'new' ? 'New question' : 'Question details' }}</h2>
-          <button type="button" class="icon-btn" aria-label="Close" (click)="editing.set(null)">✕</button>
+          <button type="button" class="icon-btn" aria-label="Close" (click)="editing.set(null)">
+            ✕
+          </button>
         </div>
         <app-question-editor
           [question]="editingQuestion()"

@@ -17,7 +17,11 @@ describe('AdminGuard', () => {
 
   it('rejects missing, malformed or invalid tokens', async () => {
     await expect(guard.canActivate(contextWith())).rejects.toBeInstanceOf(UnauthorizedException);
-    await expect(guard.canActivate(contextWith('good'))).rejects.toBeInstanceOf(UnauthorizedException);
-    await expect(guard.canActivate(contextWith('Bearer bad'))).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(guard.canActivate(contextWith('good'))).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
+    await expect(guard.canActivate(contextWith('Bearer bad'))).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
   });
 });

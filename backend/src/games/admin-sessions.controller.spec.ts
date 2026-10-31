@@ -13,7 +13,9 @@ describe('AdminSessionsController', () => {
     listSessions: vi.fn(async () => [{ id: 's1' }]),
     loadContext: vi.fn(async (id: string) => (id === 's1' ? { session, players: [{}, {}] } : null)),
   } as unknown as SessionsService;
-  const results = { getResults: vi.fn(async () => ({ leaderboard: [] })) } as unknown as ResultsService;
+  const results = {
+    getResults: vi.fn(async () => ({ leaderboard: [] })),
+  } as unknown as ResultsService;
   const realtime = { gamesChanged: vi.fn() } as unknown as RealtimeService;
   const controller = new AdminSessionsController(sessions, results, realtime);
 

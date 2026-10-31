@@ -1,7 +1,27 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Question, QuestionInput, QUESTION_TYPE_INFO, QuizDetail, QuizInput } from '@pop-quiz/shared';
+import {
+  Question,
+  QuestionInput,
+  QUESTION_TYPE_INFO,
+  QuizDetail,
+  QuizInput,
+} from '@pop-quiz/shared';
 import { ApiService } from '../../../core/api.service';
 import { errorMessage } from '../../../core/error-message';
 import { ToastService } from '../../../core/toast.service';
@@ -11,7 +31,15 @@ import { QuestionEditorComponent } from './question-editor.component';
 
 @Component({
   selector: 'app-quiz-editor-page',
-  imports: [RouterLink, CdkDropList, CdkDrag, CdkDragHandle, ImageUploadComponent, ConfirmButtonComponent, QuestionEditorComponent],
+  imports: [
+    RouterLink,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
+    ImageUploadComponent,
+    ConfirmButtonComponent,
+    QuestionEditorComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './quiz-editor.page.html',
   styleUrl: './quiz-editor.page.scss',
@@ -27,7 +55,11 @@ export class QuizEditorPage implements OnInit {
   protected readonly info = QUESTION_TYPE_INFO;
   protected readonly quiz = signal<QuizDetail | null>(null);
   protected readonly loading = signal(false);
-  protected readonly details = signal<QuizInput>({ title: '', description: '', coverImageUrl: null });
+  protected readonly details = signal<QuizInput>({
+    title: '',
+    description: '',
+    coverImageUrl: null,
+  });
   protected readonly savingDetails = signal(false);
   /** The question open in the editor panel: a question, 'new', or nothing. */
   protected readonly editing = signal<Question | 'new' | null>(null);
@@ -39,7 +71,12 @@ export class QuizEditorPage implements OnInit {
   protected readonly detailsDirty = computed(() => {
     const q = this.quiz();
     const d = this.details();
-    return !q || q.title !== d.title || (q.description ?? '') !== (d.description ?? '') || q.coverImageUrl !== d.coverImageUrl;
+    return (
+      !q ||
+      q.title !== d.title ||
+      (q.description ?? '') !== (d.description ?? '') ||
+      q.coverImageUrl !== d.coverImageUrl
+    );
   });
   protected readonly editingQuestion = computed(() => {
     const e = this.editing();
@@ -55,7 +92,11 @@ export class QuizEditorPage implements OnInit {
     try {
       const quiz = await this.api.getQuiz(this.id()!);
       this.quiz.set(quiz);
-      this.details.set({ title: quiz.title, description: quiz.description ?? '', coverImageUrl: quiz.coverImageUrl });
+      this.details.set({
+        title: quiz.title,
+        description: quiz.description ?? '',
+        coverImageUrl: quiz.coverImageUrl,
+      });
     } catch (error) {
       this.toast.error(errorMessage(error));
       void this.router.navigate(['/admin/quizzes']);
@@ -135,7 +176,13 @@ export class QuizEditorPage implements OnInit {
     if (!quiz) return;
     try {
       const { type, text, imageUrl, points, config } = question;
-      const copy = await this.api.createQuestion(quiz.id, { type, text: `${text} (copy)`.slice(0, 500), imageUrl, points, config } as QuestionInput);
+      const copy = await this.api.createQuestion(quiz.id, {
+        type,
+        text: `${text} (copy)`.slice(0, 500),
+        imageUrl,
+        points,
+        config,
+      } as QuestionInput);
       this.setQuestions([...quiz.questions, copy]);
       this.toast.success('Question duplicated');
     } catch (error) {
@@ -148,7 +195,9 @@ export class QuizEditorPage implements OnInit {
     if (!quiz) return;
     try {
       await this.api.deleteQuestion(question.id);
-      this.setQuestions(quiz.questions.filter((q) => q.id !== question.id).map((q, order) => ({ ...q, order })));
+      this.setQuestions(
+        quiz.questions.filter((q) => q.id !== question.id).map((q, order) => ({ ...q, order })),
+      );
     } catch (error) {
       this.toast.error(errorMessage(error));
     }
@@ -163,7 +212,12 @@ export class QuizEditorPage implements OnInit {
     moveItemInArray(after, event.previousIndex, event.currentIndex);
     this.setQuestions(after.map((q, order) => ({ ...q, order })));
     try {
-      this.setQuestions(await this.api.reorderQuestions(quiz.id, after.map((q) => q.id)));
+      this.setQuestions(
+        await this.api.reorderQuestions(
+          quiz.id,
+          after.map((q) => q.id),
+        ),
+      );
     } catch (error) {
       this.setQuestions(before);
       this.toast.error(errorMessage(error));

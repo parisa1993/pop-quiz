@@ -24,7 +24,12 @@ describe('QuizzesService', () => {
 
   it('creates, updates and gets quizzes', async () => {
     const created = await service.create({ title: 'Party', description: 'Fun' });
-    expect(created).toMatchObject({ title: 'Party', enabled: false, questionCount: 0, questions: [] });
+    expect(created).toMatchObject({
+      title: 'Party',
+      enabled: false,
+      questionCount: 0,
+      questions: [],
+    });
     expect(realtime.gamesChanged).not.toHaveBeenCalled();
 
     const updated = await service.update(created.id, { enabled: true, title: 'Big Party' });
@@ -32,7 +37,9 @@ describe('QuizzesService', () => {
     expect(realtime.gamesChanged).toHaveBeenCalled();
 
     await expect(service.get('missing')).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.update('missing', { title: 'x' })).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.update('missing', { title: 'x' })).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 
   it('lists quizzes with play statistics', async () => {

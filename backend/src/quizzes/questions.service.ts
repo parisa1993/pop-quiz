@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Question, validateQuestionInput } from '@pop-quiz/shared';
 import { toQuestion } from '../common/mappers.js';
 import { SessionsService } from '../games/sessions.service.js';
@@ -40,7 +45,10 @@ export class QuestionsService {
     await this.assertEditable(existing.quizId);
     await this.prisma.$transaction(async (tx) => {
       await tx.question.delete({ where: { id } });
-      const rest = await tx.question.findMany({ where: { quizId: existing.quizId }, orderBy: { order: 'asc' } });
+      const rest = await tx.question.findMany({
+        where: { quizId: existing.quizId },
+        orderBy: { order: 'asc' },
+      });
       for (const [order, q] of rest.entries()) {
         if (q.order !== order) await tx.question.update({ where: { id: q.id }, data: { order } });
       }
@@ -59,9 +67,14 @@ export class QuestionsService {
     if (!valid) throw new BadRequestException('The new order must include every question once');
 
     await this.prisma.$transaction(
-      (ids as string[]).map((id, order) => this.prisma.question.update({ where: { id }, data: { order } })),
+      (ids as string[]).map((id, order) =>
+        this.prisma.question.update({ where: { id }, data: { order } }),
+      ),
     );
-    const rows = await this.prisma.question.findMany({ where: { quizId }, orderBy: { order: 'asc' } });
+    const rows = await this.prisma.question.findMany({
+      where: { quizId },
+      orderBy: { order: 'asc' },
+    });
     return rows.map(toQuestion);
   }
 
@@ -81,7 +94,9 @@ export class QuestionsService {
     const quiz = await this.prisma.quiz.findUnique({ where: { id: quizId } });
     if (!quiz) throw new NotFoundException('Quiz not found');
     if (await this.sessions.hasLiveSession(quizId)) {
-      throw new ConflictException("This quiz is being played right now. Edit it after the game ends");
+      throw new ConflictException(
+        'This quiz is being played right now. Edit it after the game ends',
+      );
     }
   }
 }

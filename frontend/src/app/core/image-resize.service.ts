@@ -17,7 +17,9 @@ export class ImageResizeService {
       canvas.height = Math.round(bitmap.height * scale);
       canvas.getContext('2d')?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
       bitmap.close();
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', 0.85),
+      );
       if (!blob) return { blob: file, name: file.name };
       return { blob, name: file.name.replace(/\.[^.]+$/, '') + '.jpg' };
     } catch {

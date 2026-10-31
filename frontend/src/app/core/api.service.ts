@@ -23,7 +23,9 @@ export class ApiService {
 
   // ----- Admin -----
   async adminLogin(password: string): Promise<string> {
-    const res = await firstValueFrom(this.http.post<AdminLoginResponse>('/api/admin/login', { password }));
+    const res = await firstValueFrom(
+      this.http.post<AdminLoginResponse>('/api/admin/login', { password }),
+    );
     return res.token;
   }
 
@@ -48,7 +50,9 @@ export class ApiService {
   }
 
   createQuestion(quizId: string, input: QuestionInput): Promise<Question> {
-    return firstValueFrom(this.http.post<Question>(`/api/admin/quizzes/${quizId}/questions`, input));
+    return firstValueFrom(
+      this.http.post<Question>(`/api/admin/quizzes/${quizId}/questions`, input),
+    );
   }
 
   updateQuestion(id: string, input: QuestionInput): Promise<Question> {
@@ -60,7 +64,9 @@ export class ApiService {
   }
 
   reorderQuestions(quizId: string, ids: string[]): Promise<Question[]> {
-    return firstValueFrom(this.http.put<Question[]>(`/api/admin/quizzes/${quizId}/questions/order`, { ids }));
+    return firstValueFrom(
+      this.http.put<Question[]>(`/api/admin/quizzes/${quizId}/questions/order`, { ids }),
+    );
   }
 
   async uploadImage(file: Blob, filename: string): Promise<string> {
@@ -71,7 +77,9 @@ export class ApiService {
   }
 
   openSession(quizId: string): Promise<SessionSummary> {
-    return firstValueFrom(this.http.post<SessionSummary>(`/api/admin/quizzes/${quizId}/sessions`, {}));
+    return firstValueFrom(
+      this.http.post<SessionSummary>(`/api/admin/quizzes/${quizId}/sessions`, {}),
+    );
   }
 
   listSessions(quizId: string): Promise<SessionSummary[]> {
@@ -79,7 +87,9 @@ export class ApiService {
   }
 
   getResults(sessionId: string): Promise<SessionResults> {
-    return firstValueFrom(this.http.get<SessionResults>(`/api/admin/sessions/${sessionId}/results`));
+    return firstValueFrom(
+      this.http.get<SessionResults>(`/api/admin/sessions/${sessionId}/results`),
+    );
   }
 
   // ----- Gamers -----
@@ -96,7 +106,9 @@ export class ApiService {
   }
 
   async joinGame(quizId: string, playerId: string): Promise<string> {
-    const res = await firstValueFrom(this.http.post<JoinGameResponse>(`/api/games/${quizId}/join`, { playerId }));
+    const res = await firstValueFrom(
+      this.http.post<JoinGameResponse>(`/api/games/${quizId}/join`, { playerId }),
+    );
     return res.sessionId;
   }
 }

@@ -77,7 +77,12 @@ describe('validateQuestionInput', () => {
     const dupes = validateQuestionInput({
       type: 'POLL',
       text: 'Q',
-      config: { options: [{ id: 'a', text: 'x' }, { id: 'a', text: 'y' }] },
+      config: {
+        options: [
+          { id: 'a', text: 'x' },
+          { id: 'a', text: 'y' },
+        ],
+      },
     });
     expect(dupes.valid).toBe(false);
   });
@@ -111,34 +116,70 @@ describe('validateQuestionInput', () => {
 
   it('validates true/false, typed, ordering and number configs', () => {
     expect(validateQuestionInput({ type: 'TRUE_FALSE', text: 'Q', config: {} }).valid).toBe(false);
-    expect(validateQuestionInput({ type: 'TRUE_FALSE', text: 'Q', config: { correct: false } }).valid).toBe(true);
     expect(
-      validateQuestionInput({ type: 'TYPE_ANSWER', text: 'Q', config: { acceptedAnswers: [' ', ''] } }).valid,
+      validateQuestionInput({ type: 'TRUE_FALSE', text: 'Q', config: { correct: false } }).valid,
+    ).toBe(true);
+    expect(
+      validateQuestionInput({
+        type: 'TYPE_ANSWER',
+        text: 'Q',
+        config: { acceptedAnswers: [' ', ''] },
+      }).valid,
     ).toBe(false);
     expect(
       validateQuestionInput({
         type: 'ORDERING',
         text: 'Q',
-        config: { items: [{ id: '1', text: 'a' }, { id: '2', text: 'b' }] },
+        config: {
+          items: [
+            { id: '1', text: 'a' },
+            { id: '2', text: 'b' },
+          ],
+        },
       }).valid,
     ).toBe(false);
     expect(
-      validateQuestionInput({ type: 'NUMBER_GUESS', text: 'Q', config: { correct: 'x', tolerance: -1 } }),
-    ).toEqual({ valid: false, errors: ['Enter the correct number', 'Tolerance must be 0 or more'] });
+      validateQuestionInput({
+        type: 'NUMBER_GUESS',
+        text: 'Q',
+        config: { correct: 'x', tolerance: -1 },
+      }),
+    ).toEqual({
+      valid: false,
+      errors: ['Enter the correct number', 'Tolerance must be 0 or more'],
+    });
     expect(
-      validateQuestionInput({ type: 'NUMBER_GUESS', text: 'Q', config: { correct: 7, unit: ' kg ' } }),
+      validateQuestionInput({
+        type: 'NUMBER_GUESS',
+        text: 'Q',
+        config: { correct: 7, unit: ' kg ' },
+      }),
     ).toMatchObject({ valid: true, value: { config: { correct: 7, tolerance: 0, unit: 'kg' } } });
   });
 });
 
 describe('isValidAnswerPayload', () => {
   const base = { id: 'q', quizId: 'z', order: 0, text: 'Q', points: 100 };
-  const single: Question = { ...base, type: 'SINGLE_CHOICE', config: { options: opts, correctOptionId: 'a' } };
-  const multi: Question = { ...base, type: 'MULTIPLE_CHOICE', config: { options: opts, correctOptionIds: ['a'] } };
+  const single: Question = {
+    ...base,
+    type: 'SINGLE_CHOICE',
+    config: { options: opts, correctOptionId: 'a' },
+  };
+  const multi: Question = {
+    ...base,
+    type: 'MULTIPLE_CHOICE',
+    config: { options: opts, correctOptionIds: ['a'] },
+  };
   const ordering: Question = {
     ...base,
     type: 'ORDERING',
-    config: { items: [{ id: '1', text: 'a' }, { id: '2', text: 'b' }, { id: '3', text: 'c' }] },
+    config: {
+      items: [
+        { id: '1', text: 'a' },
+        { id: '2', text: 'b' },
+        { id: '3', text: 'c' },
+      ],
+    },
   };
 
   it('checks option ids exist', () => {
@@ -159,11 +200,17 @@ describe('isValidAnswerPayload', () => {
   });
 
   it('checks primitive payloads', () => {
-    expect(isValidAnswerPayload({ ...base, type: 'TRUE_FALSE', config: { correct: true } }, { value: 'yes' })).toBe(
-      false,
-    );
     expect(
-      isValidAnswerPayload({ ...base, type: 'TYPE_ANSWER', config: { acceptedAnswers: ['x'] } }, { text: 'hi' }),
+      isValidAnswerPayload(
+        { ...base, type: 'TRUE_FALSE', config: { correct: true } },
+        { value: 'yes' },
+      ),
+    ).toBe(false);
+    expect(
+      isValidAnswerPayload(
+        { ...base, type: 'TYPE_ANSWER', config: { acceptedAnswers: ['x'] } },
+        { text: 'hi' },
+      ),
     ).toBe(true);
     expect(
       isValidAnswerPayload(

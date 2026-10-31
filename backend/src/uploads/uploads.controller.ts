@@ -39,7 +39,8 @@ export class UploadsController {
   async upload(@UploadedFile() file: UploadedImage | undefined): Promise<UploadResponse> {
     if (!file) throw new BadRequestException('Choose a picture to upload');
     const extension = IMAGE_EXTENSIONS[file.mimetype];
-    if (!extension) throw new BadRequestException('Only JPG, PNG, WebP or GIF pictures are allowed');
+    if (!extension)
+      throw new BadRequestException('Only JPG, PNG, WebP or GIF pictures are allowed');
 
     await mkdir(this.config.uploadsDir, { recursive: true });
     const name = `${randomUUID()}${extension}`;

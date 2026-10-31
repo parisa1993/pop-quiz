@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { QuizSummary, ServerEvents } from '@pop-quiz/shared';
@@ -54,8 +61,13 @@ export class QuizListPage implements OnInit {
     this.busyId.set(quiz.id);
     try {
       const updated = await this.api.updateQuiz(quiz.id, { enabled: !quiz.enabled });
-      this.quizzes.update((list) => list?.map((q) => (q.id === quiz.id ? { ...q, enabled: updated.enabled } : q)) ?? null);
-      this.toast.success(updated.enabled ? `"${quiz.title}" is now visible to players` : `"${quiz.title}" is hidden`);
+      this.quizzes.update(
+        (list) =>
+          list?.map((q) => (q.id === quiz.id ? { ...q, enabled: updated.enabled } : q)) ?? null,
+      );
+      this.toast.success(
+        updated.enabled ? `"${quiz.title}" is now visible to players` : `"${quiz.title}" is hidden`,
+      );
     } catch (error) {
       this.toast.error(errorMessage(error));
     } finally {

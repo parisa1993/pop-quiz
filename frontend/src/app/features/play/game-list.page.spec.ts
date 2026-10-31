@@ -1,7 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { GameListItem, ServerEvents } from '@pop-quiz/shared';
-import { createApiMock, FakeSocket, flush, provideApiMock, provideFakeSocket } from '../../../testing/test-helpers';
+import {
+  createApiMock,
+  FakeSocket,
+  flush,
+  provideApiMock,
+  provideFakeSocket,
+} from '../../../testing/test-helpers';
 import { PlayerSessionService } from '../../core/player-session.service';
 import { GameListPage } from './game-list.page';
 
@@ -24,7 +30,9 @@ describe('GameListPage', () => {
       joinGame: vi.fn().mockResolvedValue('s1'),
     });
     const socket = new FakeSocket();
-    TestBed.configureTestingModule({ providers: [provideRouter([]), provideApiMock(api), provideFakeSocket(socket)] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideApiMock(api), provideFakeSocket(socket)],
+    });
     TestBed.inject(PlayerSessionService).player.set({ id: 'p1', username: 'Ana' });
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const fixture = TestBed.createComponent(GameListPage);
@@ -35,7 +43,9 @@ describe('GameListPage', () => {
   }
 
   it('greets the player and lists games with live status', async () => {
-    const { el } = await setup([game({ session: { id: 's1', status: 'IN_PROGRESS', playerCount: 4 } })]);
+    const { el } = await setup([
+      game({ session: { id: 's1', status: 'IN_PROGRESS', playerCount: 4 } }),
+    ]);
     expect(el.textContent).toContain('Ana');
     expect(el.textContent).toContain('Live now');
     expect(el.textContent).toContain('5 questions');

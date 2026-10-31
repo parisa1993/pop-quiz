@@ -6,7 +6,9 @@ import { AdminLayoutComponent } from './admin-layout.component';
 
 describe('AdminLayoutComponent', () => {
   it('shows the admin bar and logs out', async () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([]), provideApiMock(createApiMock())] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideApiMock(createApiMock())],
+    });
     const auth = TestBed.inject(AdminAuthService);
     auth.token.set('jwt');
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { GameListItem, ServerEvents } from '@pop-quiz/shared';
@@ -27,7 +34,8 @@ export class GameListPage implements OnInit {
 
   ngOnInit(): void {
     void this.players.verify().then((ok) => {
-      if (!ok && !this.players.player()) void this.router.navigate(['/play/name'], { replaceUrl: true });
+      if (!ok && !this.players.player())
+        void this.router.navigate(['/play/name'], { replaceUrl: true });
     });
     void this.load();
     this.socket.connect();

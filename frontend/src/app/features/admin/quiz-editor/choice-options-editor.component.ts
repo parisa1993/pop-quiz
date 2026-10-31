@@ -18,17 +18,33 @@ export interface ChoiceChange {
   template: `
     <p class="hint">
       @switch (mode()) {
-        @case ('single') { Tap the circle next to the <b>one</b> correct answer. }
-        @case ('multi') { Tick <b>every</b> correct answer. }
-        @default { Polls have no right answer. }
+        @case ('single') {
+          Tap the circle next to the <b>one</b> correct answer.
+        }
+        @case ('multi') {
+          Tick <b>every</b> correct answer.
+        }
+        @default {
+          Polls have no right answer.
+        }
       }
     </p>
     <ul class="options" [class.options--images]="images()">
       @for (option of options(); track option.id; let i = $index) {
-        <li class="option" [style.--tile]="style(i).color" [class.is-correct]="correctIds().includes(option.id)">
+        <li
+          class="option"
+          [style.--tile]="style(i).color"
+          [class.is-correct]="correctIds().includes(option.id)"
+        >
           <span class="shape option__shape" aria-hidden="true">{{ style(i).shape }}</span>
           @if (images()) {
-            <app-image-upload class="option__img" [compact]="true" [url]="option.imageUrl" label="Add picture" (changed)="setImage(i, $event)" />
+            <app-image-upload
+              class="option__img"
+              [compact]="true"
+              [url]="option.imageUrl"
+              label="Add picture"
+              (changed)="setImage(i, $event)"
+            />
           }
           <input
             class="input option__text"
@@ -49,7 +65,13 @@ export interface ChoiceChange {
               <span>Correct</span>
             </label>
           }
-          <button type="button" class="icon-btn" (click)="remove(i)" [disabled]="options().length <= minOptions" [attr.aria-label]="'Remove answer ' + (i + 1)">
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="remove(i)"
+            [disabled]="options().length <= minOptions"
+            [attr.aria-label]="'Remove answer ' + (i + 1)"
+          >
             ✕
           </button>
         </li>
@@ -60,9 +82,20 @@ export interface ChoiceChange {
     }
   `,
   styles: `
-    .hint { color: var(--c-ink-soft); font-size: var(--fs-s); }
-    .options { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-2); }
-    .options--images { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .hint {
+      color: var(--c-ink-soft);
+      font-size: var(--fs-s);
+    }
+    .options {
+      list-style: none;
+      margin: 0 0 var(--space-3);
+      padding: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+    .options--images {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
     .option {
       display: flex;
       flex-wrap: wrap;
@@ -73,14 +106,42 @@ export interface ChoiceChange {
       border: 3px solid transparent;
       background: var(--c-surface-2);
     }
-    .option.is-correct { border-color: var(--c-teal); background: #e7faf5; }
-    .option__shape { background: var(--tile); color: #fff; }
-    .option__text { flex: 1 1 140px; min-height: 44px; }
-    .options--images .option { flex-direction: column; align-items: stretch; }
-    .options--images .option__shape { align-self: flex-start; }
-    .option__img { width: 100%; }
-    .option__correct { display: inline-flex; align-items: center; gap: var(--space-1); font-weight: 800; font-size: var(--fs-s); color: #08765f; cursor: pointer; }
-    .option__correct input { width: 22px; height: 22px; accent-color: var(--c-teal); }
+    .option.is-correct {
+      border-color: var(--c-teal);
+      background: #e7faf5;
+    }
+    .option__shape {
+      background: var(--tile);
+      color: #fff;
+    }
+    .option__text {
+      flex: 1 1 140px;
+      min-height: 44px;
+    }
+    .options--images .option {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .options--images .option__shape {
+      align-self: flex-start;
+    }
+    .option__img {
+      width: 100%;
+    }
+    .option__correct {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-weight: 800;
+      font-size: var(--fs-s);
+      color: #08765f;
+      cursor: pointer;
+    }
+    .option__correct input {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--c-teal);
+    }
   `,
 })
 export class ChoiceOptionsEditorComponent {
@@ -105,7 +166,11 @@ export class ChoiceOptionsEditorComponent {
   protected toggleCorrect(id: string): void {
     const current = this.correctIds();
     const correctIds =
-      this.mode() === 'single' ? [id] : current.includes(id) ? current.filter((c) => c !== id) : [...current, id];
+      this.mode() === 'single'
+        ? [id]
+        : current.includes(id)
+          ? current.filter((c) => c !== id)
+          : [...current, id];
     this.changed.emit({ options: this.options(), correctIds });
   }
 
@@ -117,7 +182,8 @@ export class ChoiceOptionsEditorComponent {
     const removed = this.options()[index];
     const options = this.options().filter((_, i) => i !== index);
     let correctIds = this.correctIds().filter((id) => id !== removed.id);
-    if (this.mode() === 'single' && correctIds.length === 0 && options[0]) correctIds = [options[0].id];
+    if (this.mode() === 'single' && correctIds.length === 0 && options[0])
+      correctIds = [options[0].id];
     this.changed.emit({ options, correctIds });
   }
 

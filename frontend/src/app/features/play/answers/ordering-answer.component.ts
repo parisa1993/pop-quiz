@@ -1,4 +1,10 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import type { AnswerPayload, OrderItem, PublicQuestion } from '@pop-quiz/shared';
 
@@ -9,28 +15,69 @@ import type { AnswerPayload, OrderItem, PublicQuestion } from '@pop-quiz/shared'
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p class="hint">{{ locked() ? 'Your order' : 'Drag into the right order (top = first)' }}</p>
-    <ol class="order" cdkDropList [cdkDropListDisabled]="locked()" (cdkDropListDropped)="drop($event)">
+    <ol
+      class="order"
+      cdkDropList
+      [cdkDropListDisabled]="locked()"
+      (cdkDropListDropped)="drop($event)"
+    >
       @for (item of items(); track item.id; let i = $index, last = $last) {
         <li class="order__item" cdkDrag cdkDragLockAxis="y">
           <span class="order__num">{{ i + 1 }}</span>
-          <button type="button" class="drag-handle" cdkDragHandle aria-label="Drag to reorder" [disabled]="locked()">⠿</button>
+          <button
+            type="button"
+            class="drag-handle"
+            cdkDragHandle
+            aria-label="Drag to reorder"
+            [disabled]="locked()"
+          >
+            ⠿
+          </button>
           <span class="order__text">{{ item.text }}</span>
           @if (!locked()) {
             <span class="order__arrows">
-              <button type="button" class="icon-btn" [disabled]="i === 0" (click)="move(i, -1)" [attr.aria-label]="'Move ' + item.text + ' up'">↑</button>
-              <button type="button" class="icon-btn" [disabled]="last" (click)="move(i, 1)" [attr.aria-label]="'Move ' + item.text + ' down'">↓</button>
+              <button
+                type="button"
+                class="icon-btn"
+                [disabled]="i === 0"
+                (click)="move(i, -1)"
+                [attr.aria-label]="'Move ' + item.text + ' up'"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                class="icon-btn"
+                [disabled]="last"
+                (click)="move(i, 1)"
+                [attr.aria-label]="'Move ' + item.text + ' down'"
+              >
+                ↓
+              </button>
             </span>
           }
         </li>
       }
     </ol>
     @if (!locked()) {
-      <button type="button" class="btn btn--yellow btn--lg btn--block" (click)="submit()">Lock in my order 🔒</button>
+      <button type="button" class="btn btn--yellow btn--lg btn--block" (click)="submit()">
+        Lock in my order 🔒
+      </button>
     }
   `,
   styles: `
-    .hint { color: var(--c-ink-soft); font-weight: 700; font-size: var(--fs-s); }
-    .order { list-style: none; padding: 0; margin: 0 0 var(--space-4); display: grid; gap: var(--space-2); }
+    .hint {
+      color: var(--c-ink-soft);
+      font-weight: 700;
+      font-size: var(--fs-s);
+    }
+    .order {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 var(--space-4);
+      display: grid;
+      gap: var(--space-2);
+    }
     .order__item {
       display: flex;
       align-items: center;
@@ -53,8 +100,14 @@ import type { AnswerPayload, OrderItem, PublicQuestion } from '@pop-quiz/shared'
       color: #fff;
       font-family: var(--font-display);
     }
-    .order__text { flex: 1; min-width: 0; }
-    .order__arrows { display: flex; gap: var(--space-1); }
+    .order__text {
+      flex: 1;
+      min-width: 0;
+    }
+    .order__arrows {
+      display: flex;
+      gap: var(--space-1);
+    }
   `,
 })
 export class OrderingAnswerComponent {

@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, HttpCode, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import type { Question, QuestionInput, ReorderQuestionsRequest } from '@pop-quiz/shared';
 import { AdminGuard } from '../auth/admin.guard.js';
 import { QuestionsService } from './questions.service.js';
@@ -14,7 +24,10 @@ export class QuestionsController {
   }
 
   @Put('quizzes/:quizId/questions/order')
-  reorder(@Param('quizId') quizId: string, @Body() body: ReorderQuestionsRequest): Promise<Question[]> {
+  reorder(
+    @Param('quizId') quizId: string,
+    @Body() body: ReorderQuestionsRequest,
+  ): Promise<Question[]> {
     return this.questions.reorder(quizId, body?.ids);
   }
 

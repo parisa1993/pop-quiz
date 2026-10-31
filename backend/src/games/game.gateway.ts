@@ -9,7 +9,12 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { ClientEvents } from '@pop-quiz/shared';
-import type { Ack, AdminSessionRequest, PlayerAnswerRequest, PlayerJoinRequest } from '@pop-quiz/shared';
+import type {
+  Ack,
+  AdminSessionRequest,
+  PlayerAnswerRequest,
+  PlayerJoinRequest,
+} from '@pop-quiz/shared';
 import type { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service.js';
 import { RealtimeService, sessionRoom, type SocketData } from './realtime.service.js';
@@ -53,7 +58,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(ClientEvents.PlayerJoin)
-  join(@ConnectedSocket() client: GameSocket, @MessageBody() body: PlayerJoinRequest): Promise<Ack> {
+  join(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: PlayerJoinRequest,
+  ): Promise<Ack> {
     return toAck(async () => {
       if (!isString(body?.sessionId) || !isString(body?.playerId)) {
         throw new HttpException('Missing game or player', 400);
@@ -70,7 +78,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(ClientEvents.PlayerAnswer)
-  answer(@ConnectedSocket() client: GameSocket, @MessageBody() body: PlayerAnswerRequest): Promise<Ack> {
+  answer(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: PlayerAnswerRequest,
+  ): Promise<Ack> {
     return toAck(async () => {
       const { playerId, sessionId } = client.data;
       if (!playerId || !sessionId || sessionId !== body?.sessionId) {
@@ -84,36 +95,55 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(ClientEvents.AdminWatch)
-  watch(@ConnectedSocket() client: GameSocket, @MessageBody() body: AdminSessionRequest): Promise<Ack> {
+  watch(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: AdminSessionRequest,
+  ): Promise<Ack> {
     return this.asAdmin(client, body, async (sessionId) => {
-      if (!(await this.sessions.loadContext(sessionId))) throw new HttpException('Game not found', 404);
+      if (!(await this.sessions.loadContext(sessionId)))
+        throw new HttpException('Game not found', 404);
       client.data.playerId = undefined;
       await this.switchRoom(client, sessionId);
     });
   }
 
   @SubscribeMessage(ClientEvents.AdminStart)
-  start(@ConnectedSocket() client: GameSocket, @MessageBody() body: AdminSessionRequest): Promise<Ack> {
+  start(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: AdminSessionRequest,
+  ): Promise<Ack> {
     return this.asAdmin(client, body, (id) => this.sessions.start(id), true);
   }
 
   @SubscribeMessage(ClientEvents.AdminNext)
-  next(@ConnectedSocket() client: GameSocket, @MessageBody() body: AdminSessionRequest): Promise<Ack> {
+  next(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: AdminSessionRequest,
+  ): Promise<Ack> {
     return this.asAdmin(client, body, (id) => this.sessions.move(id, 1));
   }
 
   @SubscribeMessage(ClientEvents.AdminPrev)
-  prev(@ConnectedSocket() client: GameSocket, @MessageBody() body: AdminSessionRequest): Promise<Ack> {
+  prev(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: AdminSessionRequest,
+  ): Promise<Ack> {
     return this.asAdmin(client, body, (id) => this.sessions.move(id, -1));
   }
 
   @SubscribeMessage(ClientEvents.AdminReveal)
-  reveal(@ConnectedSocket() client: GameSocket, @MessageBody() body: AdminSessionRequest): Promise<Ack> {
+  reveal(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: AdminSessionRequest,
+  ): Promise<Ack> {
     return this.asAdmin(client, body, (id) => this.sessions.reveal(id));
   }
 
   @SubscribeMessage(ClientEvents.AdminFinish)
-  finish(@ConnectedSocket() client: GameSocket, @MessageBody() body: AdminSessionRequest): Promise<Ack> {
+  finish(
+    @ConnectedSocket() client: GameSocket,
+    @MessageBody() body: AdminSessionRequest,
+  ): Promise<Ack> {
     return this.asAdmin(client, body, (id) => this.sessions.finish(id), true);
   }
 

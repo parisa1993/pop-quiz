@@ -7,7 +7,10 @@ import { UploadsController } from './uploads.controller.js';
 
 describe('UploadsController', () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'pop-quiz-uploads-'));
-  const controller = new UploadsController({ ...loadConfig({}), uploadsDir: path.join(dir, 'uploads') });
+  const controller = new UploadsController({
+    ...loadConfig({}),
+    uploadsDir: path.join(dir, 'uploads'),
+  });
 
   afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
@@ -19,8 +22,8 @@ describe('UploadsController', () => {
 
   it('rejects missing files and non-images', async () => {
     await expect(controller.upload(undefined)).rejects.toBeInstanceOf(BadRequestException);
-    await expect(controller.upload({ buffer: Buffer.from('x'), mimetype: 'application/pdf' })).rejects.toThrow(
-      'Only JPG, PNG, WebP or GIF pictures are allowed',
-    );
+    await expect(
+      controller.upload({ buffer: Buffer.from('x'), mimetype: 'application/pdf' }),
+    ).rejects.toThrow('Only JPG, PNG, WebP or GIF pictures are allowed');
   });
 });

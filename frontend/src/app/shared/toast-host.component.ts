@@ -9,7 +9,11 @@ const ICONS = { info: '💬', success: '✅', error: '⚠️', party: '🎉' } a
   template: `
     <div class="toasts" aria-live="polite" role="status">
       @for (toast of toasts.toasts(); track toast.id) {
-        <button type="button" class="toast toast--{{ toast.kind }} pop-in" (click)="toasts.dismiss(toast.id)">
+        <button
+          type="button"
+          class="toast toast--{{ toast.kind }} pop-in"
+          (click)="toasts.dismiss(toast.id)"
+        >
           <span aria-hidden="true">{{ icons[toast.kind] }}</span>
           <span>{{ toast.text }}</span>
         </button>
@@ -45,9 +49,15 @@ const ICONS = { info: '💬', success: '✅', error: '⚠️', party: '🎉' } a
       cursor: pointer;
       border-left: 6px solid var(--c-primary);
     }
-    .toast--success { border-left-color: var(--c-success); }
-    .toast--error { border-left-color: var(--c-danger); }
-    .toast--party { border-left-color: var(--c-pink); }
+    .toast--success {
+      border-left-color: var(--c-success);
+    }
+    .toast--error {
+      border-left-color: var(--c-danger);
+    }
+    .toast--party {
+      border-left-color: var(--c-pink);
+    }
   `,
 })
 export class ToastHostComponent {

@@ -21,13 +21,21 @@ describe('QuizListPage', () => {
   async function setup(quizzes: QuizSummary[]) {
     api = createApiMock({
       listQuizzes: vi.fn().mockResolvedValue(quizzes),
-      updateQuiz: vi.fn(async (_id: string, body: { enabled: boolean }) => ({ ...quizzes[0], ...body })),
+      updateQuiz: vi.fn(async (_id: string, body: { enabled: boolean }) => ({
+        ...quizzes[0],
+        ...body,
+      })),
       openSession: vi.fn().mockResolvedValue({ id: 's1' }),
     });
     socket = new FakeSocket();
     toast = { success: vi.fn(), error: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), provideApiMock(api), provideFakeSocket(socket), { provide: ToastService, useValue: toast }],
+      providers: [
+        provideRouter([]),
+        provideApiMock(api),
+        provideFakeSocket(socket),
+        { provide: ToastService, useValue: toast },
+      ],
     });
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const fixture = TestBed.createComponent(QuizListPage);
@@ -38,7 +46,9 @@ describe('QuizListPage', () => {
   }
 
   it('lists quizzes with their stats', async () => {
-    const { el } = await setup([quizSummary({ activeSession: { id: 's1', status: 'IN_PROGRESS', playerCount: 2 } })]);
+    const { el } = await setup([
+      quizSummary({ activeSession: { id: 's1', status: 'IN_PROGRESS', playerCount: 2 } }),
+    ]);
     expect(el.textContent).toContain('Birthday Bash');
     expect(el.textContent).toContain('3 played');
     expect(el.textContent).toContain('Live');

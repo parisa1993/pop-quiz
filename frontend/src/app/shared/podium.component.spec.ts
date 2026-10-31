@@ -17,7 +17,9 @@ describe('PodiumComponent', () => {
     fixture.componentRef.setInput('players', [player(1, 'Ana'), player(2, 'Ben'), player(3, 'Cy')]);
     fixture.componentRef.setInput('highlightId', 'Ben');
     await fixture.whenStable();
-    const names = [...fixture.nativeElement.querySelectorAll('.podium__name')].map((n: Element) => n.textContent);
+    const names = [...fixture.nativeElement.querySelectorAll('.podium__name')].map(
+      (n: Element) => n.textContent,
+    );
     expect(names).toEqual(['Ben', 'Ana', 'Cy']);
     expect(fixture.nativeElement.querySelector('.is-me .podium__name').textContent).toBe('Ben');
   });

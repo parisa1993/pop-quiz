@@ -11,18 +11,34 @@
     <div class="grid">
       @for (quiz of list; track quiz.id) {
         <article class="quiz card pop-in">
-          <div class="quiz__cover" [style.background-image]="quiz.coverImageUrl ? 'url(' + quiz.coverImageUrl + ')' : null">
+          <div
+            class="quiz__cover"
+            [style.background-image]="quiz.coverImageUrl ? 'url(' + quiz.coverImageUrl + ')' : null"
+          >
             @if (quiz.activeSession; as active) {
-              <span class="badge quiz__live" [class.badge--live]="active.status === 'IN_PROGRESS'" [class.badge--lobby]="active.status === 'LOBBY'">
-                {{ active.status === 'IN_PROGRESS' ? 'Live' : 'Lobby' }} · {{ active.playerCount }} 👥
+              <span
+                class="badge quiz__live"
+                [class.badge--live]="active.status === 'IN_PROGRESS'"
+                [class.badge--lobby]="active.status === 'LOBBY'"
+              >
+                {{ active.status === 'IN_PROGRESS' ? 'Live' : 'Lobby' }} ·
+                {{ active.playerCount }} 👥
               </span>
             }
           </div>
           <div class="quiz__body">
             <div class="row row--between">
               <h2 class="quiz__title">{{ quiz.title }}</h2>
-              <label class="switch" [attr.aria-label]="(quiz.enabled ? 'Disable ' : 'Enable ') + quiz.title">
-                <input type="checkbox" [checked]="quiz.enabled" [disabled]="busyId() === quiz.id" (change)="toggle(quiz)" />
+              <label
+                class="switch"
+                [attr.aria-label]="(quiz.enabled ? 'Disable ' : 'Enable ') + quiz.title"
+              >
+                <input
+                  type="checkbox"
+                  [checked]="quiz.enabled"
+                  [disabled]="busyId() === quiz.id"
+                  (change)="toggle(quiz)"
+                />
                 <span class="switch__track"></span>
                 <span class="quiz__state">{{ quiz.enabled ? 'On' : 'Off' }}</span>
               </label>
@@ -36,11 +52,21 @@
               <span class="stat">🎮 {{ quiz.sessionCount }} games</span>
             </div>
             <div class="row quiz__actions">
-              <button type="button" class="btn btn--pink" [disabled]="quiz.questionCount === 0 || busyId() === quiz.id" (click)="host(quiz)">
+              <button
+                type="button"
+                class="btn btn--pink"
+                [disabled]="quiz.questionCount === 0 || busyId() === quiz.id"
+                (click)="host(quiz)"
+              >
                 ▶ {{ quiz.activeSession ? 'Open host screen' : 'Host game' }}
               </button>
               <a [routerLink]="['/admin/quizzes', quiz.id]" class="btn btn--soft">✏️ Edit</a>
-              <a [routerLink]="['/admin/quizzes', quiz.id, 'results']" class="btn btn--soft" [class.is-disabled]="quiz.sessionCount === 0">🏆 Results</a>
+              <a
+                [routerLink]="['/admin/quizzes', quiz.id, 'results']"
+                class="btn btn--soft"
+                [class.is-disabled]="quiz.sessionCount === 0"
+                >🏆 Results</a
+              >
               <app-confirm-button
                 class="quiz__delete"
                 buttonClass="icon-btn"
@@ -48,7 +74,8 @@
                 yesLabel="Delete"
                 (confirmed)="remove(quiz)"
               >
-                <span aria-hidden="true">🗑️</span><span class="visually-hidden">Delete {{ quiz.title }}</span>
+                <span aria-hidden="true">🗑️</span
+                ><span class="visually-hidden">Delete {{ quiz.title }}</span>
               </app-confirm-button>
             </div>
           </div>

@@ -54,7 +54,10 @@ describe('GamePage', () => {
     socket.connected.set(true);
     TestBed.tick();
     await flush();
-    expect(socket.emit).toHaveBeenCalledWith(ClientEvents.PlayerJoin, { sessionId: 's1', playerId: 'p1' });
+    expect(socket.emit).toHaveBeenCalledWith(ClientEvents.PlayerJoin, {
+      sessionId: 's1',
+      playerId: 'p1',
+    });
   });
 
   it('leaves the game if joining fails', async () => {
@@ -121,7 +124,9 @@ describe('GamePage', () => {
   it('shows the final rank and podium, then goes back to the list', async () => {
     const { el, push, navigate } = await setup();
     await push({ status: 'IN_PROGRESS', question: publicChoice });
-    const podium = [{ playerId: 'p1', username: 'Ana', score: 300, rank: 1, correctCount: 3, answeredCount: 3 }];
+    const podium = [
+      { playerId: 'p1', username: 'Ana', score: 300, rank: 1, correctCount: 3, answeredCount: 3 },
+    ];
     await push({ status: 'FINISHED', final: { rank: 1, score: 300, playerCount: 2, podium } });
     expect(el.textContent).toContain('You won!');
     expect(el.textContent).toContain('300 points');

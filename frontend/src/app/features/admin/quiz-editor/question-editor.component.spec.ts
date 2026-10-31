@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { choiceQuestion, createApiMock, provideApiMock, trueFalseQuestion } from '../../../../testing/test-helpers';
+import {
+  choiceQuestion,
+  createApiMock,
+  provideApiMock,
+  trueFalseQuestion,
+} from '../../../../testing/test-helpers';
 import { QuestionEditorComponent } from './question-editor.component';
 
 describe('QuestionEditorComponent', () => {
@@ -24,7 +29,9 @@ describe('QuestionEditorComponent', () => {
     await fixture.whenStable();
   };
   const pickType = async (label: string) => {
-    const button = [...el.querySelectorAll('.type')].find((b) => b.textContent?.includes(label)) as HTMLButtonElement;
+    const button = [...el.querySelectorAll('.type')].find((b) =>
+      b.textContent?.includes(label),
+    ) as HTMLButtonElement;
     button.click();
     await fixture.whenStable();
   };
@@ -64,7 +71,9 @@ describe('QuestionEditorComponent', () => {
     await pickType('True / False');
     await type('textarea', 'Sky is green');
     (el.querySelector('.tf__btn--false') as HTMLButtonElement).click();
-    const preset = [...el.querySelectorAll('.presets .chip')].find((c) => c.textContent === '500') as HTMLButtonElement;
+    const preset = [...el.querySelectorAll('.presets .chip')].find(
+      (c) => c.textContent?.trim() === '500',
+    ) as HTMLButtonElement;
     preset.click();
     await fixture.whenStable();
     await save();
@@ -83,19 +92,28 @@ describe('QuestionEditorComponent', () => {
     await type('textarea', 'Cat name?');
     await type('app-text-list-editor input', 'Miso');
     await save();
-    expect(saved).toHaveBeenLastCalledWith(expect.objectContaining({ config: { acceptedAnswers: ['Miso'] } }));
+    expect(saved).toHaveBeenLastCalledWith(
+      expect.objectContaining({ config: { acceptedAnswers: ['Miso'] } }),
+    );
 
     await pickType('Guess the number');
     await type('.number input', '30', 0);
     await type('.number input', '2', 1);
     await type('.number input', 'years', 2);
     await save();
-    expect(saved).toHaveBeenLastCalledWith(expect.objectContaining({ config: { correct: 30, tolerance: 2, unit: 'years' } }));
+    expect(saved).toHaveBeenLastCalledWith(
+      expect.objectContaining({ config: { correct: 30, tolerance: 2, unit: 'years' } }),
+    );
 
     await pickType('Put in order');
-    for (const [i, text] of ['A', 'B', 'C'].entries()) await type('app-text-list-editor input', text, i);
+    for (const [i, text] of ['A', 'B', 'C'].entries())
+      await type('app-text-list-editor input', text, i);
     await save();
-    expect(saved.mock.lastCall![0].config.items.map((i: { text: string }) => i.text)).toEqual(['A', 'B', 'C']);
+    expect(saved.mock.lastCall![0].config.items.map((i: { text: string }) => i.text)).toEqual([
+      'A',
+      'B',
+      'C',
+    ]);
   });
 
   it('keeps options when switching between choice types', async () => {

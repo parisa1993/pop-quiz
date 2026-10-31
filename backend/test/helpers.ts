@@ -17,7 +17,9 @@ export interface TestServer {
 /** Boots the full Nest app on a random port with an isolated database. */
 export async function startServer(): Promise<TestServer> {
   const db = await createTestDb();
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule.forRoot(db.config)] }).compile();
+  const moduleRef = await Test.createTestingModule({
+    imports: [AppModule.forRoot(db.config)],
+  }).compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>({ logger: false });
   configureApp(app, db.config);
   await app.listen(0, '127.0.0.1');
@@ -34,14 +36,22 @@ export async function startServer(): Promise<TestServer> {
 }
 
 export function connect(url: string, token?: string): Promise<Socket> {
-  const socket = io(url, { transports: ['websocket'], auth: token ? { token } : {}, forceNew: true });
+  const socket = io(url, {
+    transports: ['websocket'],
+    auth: token ? { token } : {},
+    forceNew: true,
+  });
   return new Promise((resolve, reject) => {
     socket.once('connect', () => resolve(socket));
     socket.once('connect_error', reject);
   });
 }
 
-export function emitAck<T = undefined>(socket: Socket, event: string, body: unknown): Promise<Ack<T>> {
+export function emitAck<T = undefined>(
+  socket: Socket,
+  event: string,
+  body: unknown,
+): Promise<Ack<T>> {
   return socket.timeout(5000).emitWithAck(event, body) as Promise<Ack<T>>;
 }
 

@@ -29,13 +29,26 @@ describe('QuizEditorPage', () => {
       reorderQuestions: vi.fn(async (_id: string, ids: string[]) =>
         ids.map((qid, order) => ({ ...detail.questions.find((q) => q.id === qid)!, order })),
       ),
-      createQuestion: vi.fn(async (_id: string, input: object) => ({ ...trueFalseQuestion, ...input, id: 'q9', order: 2 })),
-      updateQuestion: vi.fn(async (qid: string, input: object) => ({ ...trueFalseQuestion, ...input, id: qid })),
+      createQuestion: vi.fn(async (_id: string, input: object) => ({
+        ...trueFalseQuestion,
+        ...input,
+        id: 'q9',
+        order: 2,
+      })),
+      updateQuestion: vi.fn(async (qid: string, input: object) => ({
+        ...trueFalseQuestion,
+        ...input,
+        id: qid,
+      })),
       openSession: vi.fn().mockResolvedValue({ id: 's1' }),
     });
     toast = { success: vi.fn(), error: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), provideApiMock(api), { provide: ToastService, useValue: toast }],
+      providers: [
+        provideRouter([]),
+        provideApiMock(api),
+        { provide: ToastService, useValue: toast },
+      ],
     });
     navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(QuizEditorPage);
@@ -46,11 +59,12 @@ describe('QuizEditorPage', () => {
     el = fixture.nativeElement as HTMLElement;
   }
 
-  const page = () => fixture.componentInstance as unknown as {
-    drop(e: Partial<CdkDragDrop<Question[]>>): Promise<void>;
-    saveQuestion(input: object): Promise<void>;
-    editing: { set(v: unknown): void; (): unknown };
-  };
+  const page = () =>
+    fixture.componentInstance as unknown as {
+      drop(e: Partial<CdkDragDrop<Question[]>>): Promise<void>;
+      saveQuestion(input: object): Promise<void>;
+      editing: { set(v: unknown): void; (): unknown };
+    };
 
   it('creates a new quiz and moves on to adding questions', async () => {
     await setup();
@@ -104,7 +118,12 @@ describe('QuizEditorPage', () => {
     await fixture.whenStable();
     expect(el.querySelector('[role=dialog]')?.textContent).toContain('New question');
 
-    await page().saveQuestion({ type: 'TRUE_FALSE', text: 'New one', points: 100, config: { correct: true } });
+    await page().saveQuestion({
+      type: 'TRUE_FALSE',
+      text: 'New one',
+      points: 100,
+      config: { correct: true },
+    });
     await fixture.whenStable();
     expect(api.createQuestion).toHaveBeenCalled();
     expect(el.querySelectorAll('.qitem')).toHaveLength(3);
@@ -113,14 +132,20 @@ describe('QuizEditorPage', () => {
     page().editing.set(choiceQuestion);
     await fixture.whenStable();
     await page().saveQuestion({ ...choiceQuestion, text: 'Changed' });
-    expect(api.updateQuestion).toHaveBeenCalledWith('q2', expect.objectContaining({ text: 'Changed' }));
+    expect(api.updateQuestion).toHaveBeenCalledWith(
+      'q2',
+      expect.objectContaining({ text: 'Changed' }),
+    );
   });
 
   it('duplicates and deletes questions', async () => {
     await setup('z1');
     (el.querySelector('[aria-label="Duplicate question"]') as HTMLButtonElement).click();
     await flush();
-    expect(api.createQuestion).toHaveBeenCalledWith('z1', expect.objectContaining({ text: 'Cake is great (copy)' }));
+    expect(api.createQuestion).toHaveBeenCalledWith(
+      'z1',
+      expect.objectContaining({ text: 'Cake is great (copy)' }),
+    );
 
     (el.querySelector('.qitem app-confirm-button button') as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -130,9 +155,14 @@ describe('QuizEditorPage', () => {
   });
 
   it('locks editing while the quiz is being played', async () => {
-    await setup('z1', quizDetail({ activeSession: { id: 's1', status: 'IN_PROGRESS', playerCount: 2 } }));
+    await setup(
+      'z1',
+      quizDetail({ activeSession: { id: 's1', status: 'IN_PROGRESS', playerCount: 2 } }),
+    );
     expect(el.textContent).toContain('being played right now');
-    expect((el.querySelector('.questions__head .btn--yellow') as HTMLButtonElement).disabled).toBe(true);
+    expect((el.querySelector('.questions__head .btn--yellow') as HTMLButtonElement).disabled).toBe(
+      true,
+    );
   });
 
   it('hosts the quiz', async () => {

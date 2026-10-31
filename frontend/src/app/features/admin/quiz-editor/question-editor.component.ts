@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  linkedSignal,
+  output,
+  signal,
+} from '@angular/core';
 import {
   ChoiceOption,
   createDefaultConfig,
@@ -16,7 +24,11 @@ import {
   validateQuestionInput,
 } from '@pop-quiz/shared';
 import { ImageUploadComponent } from '../../../shared/image-upload.component';
-import { ChoiceChange, ChoiceOptionsEditorComponent, CorrectMode } from './choice-options-editor.component';
+import {
+  ChoiceChange,
+  ChoiceOptionsEditorComponent,
+  CorrectMode,
+} from './choice-options-editor.component';
 import { TextItem, TextListEditorComponent } from './text-list-editor.component';
 
 interface Draft {
@@ -33,7 +45,13 @@ const POINT_PRESETS = [50, 100, 200, 500];
 
 function toDraft(question: Question | null): Draft {
   if (!question) {
-    return { type: 'SINGLE_CHOICE', text: '', imageUrl: null, points: DEFAULT_POINTS, config: createDefaultConfig('SINGLE_CHOICE') };
+    return {
+      type: 'SINGLE_CHOICE',
+      text: '',
+      imageUrl: null,
+      points: DEFAULT_POINTS,
+      config: createDefaultConfig('SINGLE_CHOICE'),
+    };
   }
   return {
     type: question.type,
@@ -74,7 +92,9 @@ export class QuestionEditorComponent {
 
   private readonly config = computed(() => this.draft().config as unknown as Loose);
   protected readonly isChoice = computed(() => CHOICE_TYPES.includes(this.draft().type));
-  protected readonly options = computed(() => (this.config()['options'] as ChoiceOption[] | undefined) ?? []);
+  protected readonly options = computed(
+    () => (this.config()['options'] as ChoiceOption[] | undefined) ?? [],
+  );
   protected readonly correctIds = computed(() => {
     const c = this.config();
     if (Array.isArray(c['correctOptionIds'])) return c['correctOptionIds'] as string[];
@@ -86,9 +106,14 @@ export class QuestionEditorComponent {
   });
   protected readonly trueFalse = computed(() => this.config()['correct'] === true);
   protected readonly accepted = computed<TextItem[]>(() =>
-    ((this.config()['acceptedAnswers'] as string[] | undefined) ?? []).map((text, i) => ({ id: `a${i}`, text })),
+    ((this.config()['acceptedAnswers'] as string[] | undefined) ?? []).map((text, i) => ({
+      id: `a${i}`,
+      text,
+    })),
   );
-  protected readonly orderItems = computed(() => (this.config()['items'] as TextItem[] | undefined) ?? []);
+  protected readonly orderItems = computed(
+    () => (this.config()['items'] as TextItem[] | undefined) ?? [],
+  );
   protected readonly numberConfig = computed(() => this.config() as unknown as NumberGuessConfig);
 
   protected patch(changes: Partial<Draft>): void {
@@ -96,7 +121,10 @@ export class QuestionEditorComponent {
   }
 
   protected patchConfig(changes: Loose): void {
-    this.draft.update((d) => ({ ...d, config: { ...(d.config as unknown as Loose), ...changes } as unknown as QuestionConfig }));
+    this.draft.update((d) => ({
+      ...d,
+      config: { ...(d.config as unknown as Loose), ...changes } as unknown as QuestionConfig,
+    }));
   }
 
   /** Switching type keeps the text and image, and keeps answers between choice-like types. */
@@ -109,14 +137,16 @@ export class QuestionEditorComponent {
       const firstCorrect = this.correctIds()[0] ?? options[0]?.id;
       config['options'] = options;
       if ('correctOptionId' in config) config['correctOptionId'] = firstCorrect;
-      if ('correctOptionIds' in config) config['correctOptionIds'] = firstCorrect ? [firstCorrect] : [];
+      if ('correctOptionIds' in config)
+        config['correctOptionIds'] = firstCorrect ? [firstCorrect] : [];
     }
     this.draft.set({ ...current, type, config: config as unknown as QuestionConfig });
   }
 
   protected onChoices(change: ChoiceChange): void {
     const type = this.draft().type;
-    if (type === 'MULTIPLE_CHOICE') this.patchConfig({ options: change.options, correctOptionIds: change.correctIds });
+    if (type === 'MULTIPLE_CHOICE')
+      this.patchConfig({ options: change.options, correctOptionIds: change.correctIds });
     else if (type === 'POLL') this.patchConfig({ options: change.options });
     else this.patchConfig({ options: change.options, correctOptionId: change.correctIds[0] ?? '' });
   }

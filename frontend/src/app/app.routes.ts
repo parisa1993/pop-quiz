@@ -34,28 +34,33 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [adminGuard],
-    loadComponent: () => import('./features/admin/admin-layout.component').then((m) => m.AdminLayoutComponent),
+    loadComponent: () =>
+      import('./features/admin/admin-layout.component').then((m) => m.AdminLayoutComponent),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'quizzes' },
       {
         path: 'quizzes',
         title: 'Quizzes · Pop Quiz',
-        loadComponent: () => import('./features/admin/quiz-list/quiz-list.page').then((m) => m.QuizListPage),
+        loadComponent: () =>
+          import('./features/admin/quiz-list/quiz-list.page').then((m) => m.QuizListPage),
       },
       {
         path: 'quizzes/new',
         title: 'New quiz · Pop Quiz',
-        loadComponent: () => import('./features/admin/quiz-editor/quiz-editor.page').then((m) => m.QuizEditorPage),
+        loadComponent: () =>
+          import('./features/admin/quiz-editor/quiz-editor.page').then((m) => m.QuizEditorPage),
       },
       {
         path: 'quizzes/:id',
         title: 'Edit quiz · Pop Quiz',
-        loadComponent: () => import('./features/admin/quiz-editor/quiz-editor.page').then((m) => m.QuizEditorPage),
+        loadComponent: () =>
+          import('./features/admin/quiz-editor/quiz-editor.page').then((m) => m.QuizEditorPage),
       },
       {
         path: 'quizzes/:id/results',
         title: 'Results · Pop Quiz',
-        loadComponent: () => import('./features/admin/results/results.page').then((m) => m.ResultsPage),
+        loadComponent: () =>
+          import('./features/admin/results/results.page').then((m) => m.ResultsPage),
       },
     ],
   },

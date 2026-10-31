@@ -36,15 +36,39 @@ import { errorMessage } from '../../core/error-message';
     </main>
   `,
   styles: `
-    .login { width: min(100%, 400px); text-align: center; }
-    .login__icon { font-size: 3rem; display: block; }
-    .login__pin { letter-spacing: 0.5em; margin-bottom: var(--space-4); }
-    .login__error { color: var(--c-danger); font-weight: 700; }
-    .login__back { display: inline-block; margin-top: var(--space-3); color: var(--c-ink-soft); }
-    .shake { animation: shake 400ms; }
+    .login {
+      width: min(100%, 400px);
+      text-align: center;
+    }
+    .login__icon {
+      font-size: 3rem;
+      display: block;
+    }
+    .login__pin {
+      letter-spacing: 0.5em;
+      margin-bottom: var(--space-4);
+    }
+    .login__error {
+      color: var(--c-danger);
+      font-weight: 700;
+    }
+    .login__back {
+      display: inline-block;
+      margin-top: var(--space-3);
+      color: var(--c-ink-soft);
+    }
+    .shake {
+      animation: shake 400ms;
+    }
     @keyframes shake {
-      20%, 60% { transform: translateX(-8px); }
-      40%, 80% { transform: translateX(8px); }
+      20%,
+      60% {
+        transform: translateX(-8px);
+      }
+      40%,
+      80% {
+        transform: translateX(8px);
+      }
     }
   `,
 })

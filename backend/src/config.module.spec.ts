@@ -5,7 +5,9 @@ import { AppConfigModule } from './config.module.js';
 describe('AppConfigModule', () => {
   it('provides the given config globally', async () => {
     const config = { ...loadConfig({}), adminPassword: '4242' };
-    const moduleRef = await Test.createTestingModule({ imports: [AppConfigModule.forRoot(config)] }).compile();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppConfigModule.forRoot(config)],
+    }).compile();
     expect(moduleRef.get(APP_CONFIG)).toBe(config);
   });
 

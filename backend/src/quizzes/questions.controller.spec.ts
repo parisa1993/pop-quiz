@@ -10,7 +10,12 @@ describe('QuestionsController', () => {
     remove: vi.fn(async () => undefined),
   };
   const controller = new QuestionsController(service as unknown as QuestionsService);
-  const body = { type: 'TRUE_FALSE', text: 'Q', points: 100, config: { correct: true } } as QuestionInput;
+  const body = {
+    type: 'TRUE_FALSE',
+    text: 'Q',
+    points: 100,
+    config: { correct: true },
+  } as QuestionInput;
 
   it('delegates every route to the service', async () => {
     expect(await controller.create('z', body)).toBe('created');

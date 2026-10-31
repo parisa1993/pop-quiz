@@ -101,7 +101,10 @@ export class GamePage implements OnInit {
   private async join(): Promise<void> {
     const player = this.players.player();
     if (!player) return;
-    const ack = await this.socket.emit(ClientEvents.PlayerJoin, { sessionId: this.sessionId(), playerId: player.id });
+    const ack = await this.socket.emit(ClientEvents.PlayerJoin, {
+      sessionId: this.sessionId(),
+      playerId: player.id,
+    });
     if (!ack.ok && this.socket.connected()) {
       this.toast.error(ack.error);
       this.backToGames();

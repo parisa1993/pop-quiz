@@ -8,7 +8,9 @@ import { AdminLoginPage } from './admin-login.page';
 describe('AdminLoginPage', () => {
   async function setup(adminLogin = vi.fn().mockResolvedValue('jwt')) {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([]), provideApiMock(createApiMock({ adminLogin }))] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideApiMock(createApiMock({ adminLogin }))],
+    });
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const fixture = TestBed.createComponent(AdminLoginPage);
     await fixture.whenStable();

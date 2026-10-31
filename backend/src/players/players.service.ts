@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PlayerDto, USERNAME_MAX, USERNAME_MIN } from '@pop-quiz/shared';
 import { PrismaService } from '../prisma/prisma.service.js';
 

@@ -8,7 +8,12 @@ describe('parseQuizInput', () => {
   });
 
   it('trims and normalizes fields', () => {
-    expect(parseQuizInput({ title: ' Fun ', description: '  ', coverImageUrl: '/u/a.png', enabled: true }, false)).toEqual({
+    expect(
+      parseQuizInput(
+        { title: ' Fun ', description: '  ', coverImageUrl: '/u/a.png', enabled: true },
+        false,
+      ),
+    ).toEqual({
       title: 'Fun',
       description: null,
       coverImageUrl: '/u/a.png',
@@ -25,6 +30,8 @@ describe('parseQuizInput', () => {
     expect(() => parseQuizInput({ title: 'x'.repeat(121) }, false)).toThrow('Title is too long');
     expect(() => parseQuizInput({ enabled: 'yes' }, true)).toThrow('Enabled must be true or false');
     expect(() => parseQuizInput({ description: 5 }, true)).toThrow('Description must be text');
-    expect(() => parseQuizInput({ description: 'x'.repeat(1001) }, true)).toThrow('Description is too long');
+    expect(() => parseQuizInput({ description: 'x'.repeat(1001) }, true)).toThrow(
+      'Description is too long',
+    );
   });
 });

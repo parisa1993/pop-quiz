@@ -31,7 +31,9 @@ describe('authInterceptor', () => {
     void firstValueFrom(http.get('/api/admin/quizzes'));
     void firstValueFrom(http.get('/api/games'));
     void firstValueFrom(http.post('/api/admin/login', {}));
-    expect(backend.expectOne('/api/admin/quizzes').request.headers.get('Authorization')).toBe('Bearer jwt');
+    expect(backend.expectOne('/api/admin/quizzes').request.headers.get('Authorization')).toBe(
+      'Bearer jwt',
+    );
     expect(backend.expectOne('/api/games').request.headers.has('Authorization')).toBe(false);
     expect(backend.expectOne('/api/admin/login').request.headers.has('Authorization')).toBe(false);
   });

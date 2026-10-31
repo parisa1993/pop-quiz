@@ -33,7 +33,11 @@
   <div class="editor__media">
     <div class="field">
       <span>Picture (optional)</span>
-      <app-image-upload [url]="draft().imageUrl" label="Add a picture to the question" (changed)="patch({ imageUrl: $event })" />
+      <app-image-upload
+        [url]="draft().imageUrl"
+        label="Add a picture to the question"
+        (changed)="patch({ imageUrl: $event })"
+      />
     </div>
     @if (draft().type !== 'POLL') {
       <div class="field">
@@ -50,7 +54,14 @@
         />
         <div class="row presets">
           @for (p of pointPresets; track p) {
-            <button type="button" class="chip chip--light" [class.is-active]="draft().points === p" (click)="patch({ points: p })">{{ p }}</button>
+            <button
+              type="button"
+              class="chip chip--light"
+              [class.is-active]="draft().points === p"
+              (click)="patch({ points: p })"
+            >
+              {{ p }}
+            </button>
           }
         </div>
       </div>
@@ -72,16 +83,29 @@
         @case ('TRUE_FALSE') {
           <p class="hint">Is the statement true or false?</p>
           <div class="tf">
-            <button type="button" class="tf__btn tf__btn--true" [class.is-active]="trueFalse()" (click)="patchConfig({ correct: true })">
+            <button
+              type="button"
+              class="tf__btn tf__btn--true"
+              [class.is-active]="trueFalse()"
+              (click)="patchConfig({ correct: true })"
+            >
               ✔ True
             </button>
-            <button type="button" class="tf__btn tf__btn--false" [class.is-active]="!trueFalse()" (click)="patchConfig({ correct: false })">
+            <button
+              type="button"
+              class="tf__btn tf__btn--false"
+              [class.is-active]="!trueFalse()"
+              (click)="patchConfig({ correct: false })"
+            >
               ✘ False
             </button>
           </div>
         }
         @case ('TYPE_ANSWER') {
-          <p class="hint">Players type their answer. Capitals, accents and punctuation don't matter. Add spelling variants too!</p>
+          <p class="hint">
+            Players type their answer. Capitals, accents and punctuation don't matter. Add spelling
+            variants too!
+          </p>
           <app-text-list-editor
             [items]="accepted()"
             placeholder="Accepted answer"
@@ -91,7 +115,9 @@
           />
         }
         @case ('ORDERING') {
-          <p class="hint">Enter the items in the <b>correct</b> order. Players get them shuffled.</p>
+          <p class="hint">
+            Enter the items in the <b>correct</b> order. Players get them shuffled.
+          </p>
           <app-text-list-editor
             [items]="orderItems()"
             placeholder="Item"
@@ -106,15 +132,36 @@
           <div class="number">
             <label class="field">
               <span>Correct number</span>
-              <input class="input" type="number" step="any" inputmode="decimal" [value]="numberConfig().correct" (input)="onNumber('correct', $any($event.target).value)" />
+              <input
+                class="input"
+                type="number"
+                step="any"
+                inputmode="decimal"
+                [value]="numberConfig().correct"
+                (input)="onNumber('correct', $any($event.target).value)"
+              />
             </label>
             <label class="field">
               <span>Accept ± (tolerance)</span>
-              <input class="input" type="number" min="0" step="any" inputmode="decimal" [value]="numberConfig().tolerance" (input)="onNumber('tolerance', $any($event.target).value)" />
+              <input
+                class="input"
+                type="number"
+                min="0"
+                step="any"
+                inputmode="decimal"
+                [value]="numberConfig().tolerance"
+                (input)="onNumber('tolerance', $any($event.target).value)"
+              />
             </label>
             <label class="field">
               <span>Unit (optional)</span>
-              <input class="input" maxlength="20" placeholder="years, cm, €…" [value]="numberConfig().unit ?? ''" (input)="patchConfig({ unit: $any($event.target).value || null })" />
+              <input
+                class="input"
+                maxlength="20"
+                placeholder="years, cm, €…"
+                [value]="numberConfig().unit ?? ''"
+                (input)="patchConfig({ unit: $any($event.target).value || null })"
+              />
             </label>
           </div>
         }
@@ -132,6 +179,8 @@
 
   <div class="editor__actions">
     <button type="button" class="btn btn--soft" (click)="cancelled.emit()">Cancel</button>
-    <button class="btn btn--teal btn--lg" [disabled]="saving()">{{ saving() ? 'Saving…' : question() ? 'Save changes' : 'Add question' }}</button>
+    <button class="btn btn--teal btn--lg" [disabled]="saving()">
+      {{ saving() ? 'Saving…' : question() ? 'Save changes' : 'Add question' }}
+    </button>
   </div>
 </form>

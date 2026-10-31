@@ -24,7 +24,12 @@ describe('QuestionsService', () => {
   it('appends new questions at the end', async () => {
     const { quiz } = await seedQuiz(db.prisma);
     const created = await service.create(quiz.id, trueFalse('New'));
-    expect(created).toMatchObject({ order: 2, text: 'New', points: 100, config: { correct: false } });
+    expect(created).toMatchObject({
+      order: 2,
+      text: 'New',
+      points: 100,
+      config: { correct: false },
+    });
   });
 
   it('validates input with friendly messages', async () => {
@@ -32,7 +37,9 @@ describe('QuestionsService', () => {
     await expect(service.create(quiz.id, { type: 'TRUE_FALSE', text: '' })).rejects.toBeInstanceOf(
       BadRequestException,
     );
-    await expect(service.create('missing', trueFalse('x'))).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.create('missing', trueFalse('x'))).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 
   it('updates and deletes, keeping order compact', async () => {
@@ -42,12 +49,17 @@ describe('QuestionsService', () => {
     expect(updated).toMatchObject({ text: 'Changed', points: 300 });
 
     await service.remove(questions[1].id);
-    const rest = await db.prisma.question.findMany({ where: { quizId: quiz.id }, orderBy: { order: 'asc' } });
+    const rest = await db.prisma.question.findMany({
+      where: { quizId: quiz.id },
+      orderBy: { order: 'asc' },
+    });
     expect(rest.map((q) => [q.id, q.order])).toEqual([
       [questions[0].id, 0],
       [third.id, 1],
     ]);
-    await expect(service.update('missing', trueFalse('x'))).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.update('missing', trueFalse('x'))).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 
   it('reorders when every id is given exactly once', async () => {
@@ -57,10 +69,12 @@ describe('QuestionsService', () => {
     expect(result.map((q) => q.id)).toEqual(ids);
     expect(result.map((q) => q.order)).toEqual([0, 1]);
 
-    await expect(service.reorder(quiz.id, [questions[0].id])).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.reorder(quiz.id, [questions[0].id, questions[0].id])).rejects.toBeInstanceOf(
+    await expect(service.reorder(quiz.id, [questions[0].id])).rejects.toBeInstanceOf(
       BadRequestException,
     );
+    await expect(
+      service.reorder(quiz.id, [questions[0].id, questions[0].id]),
+    ).rejects.toBeInstanceOf(BadRequestException);
     await expect(service.reorder(quiz.id, 'nope')).rejects.toBeInstanceOf(BadRequestException);
   });
 

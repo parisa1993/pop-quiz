@@ -4,7 +4,14 @@ import { USERNAME_MAX, USERNAME_MIN } from '@pop-quiz/shared';
 import { errorMessage } from '../../core/error-message';
 import { PlayerSessionService } from '../../core/player-session.service';
 
-const SUGGESTIONS = ['Cake Boss', 'Party Panda', 'Quiz Wizard', 'Confetti Queen', 'Balloon Ninja', 'Candle King'];
+const SUGGESTIONS = [
+  'Cake Boss',
+  'Party Panda',
+  'Quiz Wizard',
+  'Confetti Queen',
+  'Balloon Ninja',
+  'Candle King',
+];
 
 @Component({
   selector: 'app-pick-name-page',
@@ -15,7 +22,9 @@ const SUGGESTIONS = ['Cake Boss', 'Party Panda', 'Quiz Wizard', 'Confetti Queen'
       <form class="card pick pop-in" (submit)="submit($event)">
         <span class="pick__emoji" aria-hidden="true">🥳</span>
         <h1>What should we call you?</h1>
-        <p class="muted">No password needed, just a fun name everyone will see on the leaderboard.</p>
+        <p class="muted">
+          No password needed, just a fun name everyone will see on the leaderboard.
+        </p>
 
         <label class="visually-hidden" for="username">Your name</label>
         <input
@@ -36,11 +45,20 @@ const SUGGESTIONS = ['Cake Boss', 'Party Panda', 'Quiz Wizard', 'Confetti Queen'
 
         <div class="pick__ideas" aria-label="Name ideas">
           @for (idea of suggestions; track idea) {
-            <button type="button" class="chip chip--light" (click)="name.set(idea); error.set(null)">{{ idea }}</button>
+            <button
+              type="button"
+              class="chip chip--light"
+              (click)="name.set(idea); error.set(null)"
+            >
+              {{ idea }}
+            </button>
           }
         </div>
 
-        <button class="btn btn--pink btn--lg btn--block" [disabled]="busy() || name().trim().length < min">
+        <button
+          class="btn btn--pink btn--lg btn--block"
+          [disabled]="busy() || name().trim().length < min"
+        >
           {{ busy() ? 'One sec…' : "Let's go! 🚀" }}
         </button>
         <a routerLink="/" class="link-btn pick__back">← Back</a>
@@ -48,9 +66,19 @@ const SUGGESTIONS = ['Cake Boss', 'Party Panda', 'Quiz Wizard', 'Confetti Queen'
     </main>
   `,
   styles: `
-    .pick { width: min(100%, 440px); text-align: center; }
-    .pick__emoji { font-size: 3.5rem; display: block; }
-    .pick__error { color: var(--c-danger); font-weight: 700; margin-top: var(--space-3); }
+    .pick {
+      width: min(100%, 440px);
+      text-align: center;
+    }
+    .pick__emoji {
+      font-size: 3.5rem;
+      display: block;
+    }
+    .pick__error {
+      color: var(--c-danger);
+      font-weight: 700;
+      margin-top: var(--space-3);
+    }
     .pick__ideas {
       display: flex;
       flex-wrap: wrap;
@@ -58,8 +86,15 @@ const SUGGESTIONS = ['Cake Boss', 'Party Panda', 'Quiz Wizard', 'Confetti Queen'
       gap: var(--space-2);
       margin: var(--space-4) 0 var(--space-5);
     }
-    .pick__ideas .chip { border: 0; cursor: pointer; }
-    .pick__back { display: inline-block; margin-top: var(--space-3); color: var(--c-ink-soft); }
+    .pick__ideas .chip {
+      border: 0;
+      cursor: pointer;
+    }
+    .pick__back {
+      display: inline-block;
+      margin-top: var(--space-3);
+      color: var(--c-ink-soft);
+    }
   `,
 })
 export class PickNamePage implements OnInit {

@@ -4,7 +4,13 @@ import type { PrismaService } from '../prisma/prisma.service.js';
 export async function seedQuiz(prisma: PrismaService, { enabled = true, title = 'Birthday' } = {}) {
   const quiz = await prisma.quiz.create({ data: { title, enabled } });
   const trueFalse = await prisma.question.create({
-    data: { quizId: quiz.id, order: 0, type: 'TRUE_FALSE', text: 'Cake is great', config: { correct: true } },
+    data: {
+      quizId: quiz.id,
+      order: 0,
+      type: 'TRUE_FALSE',
+      text: 'Cake is great',
+      config: { correct: true },
+    },
   });
   const choice = await prisma.question.create({
     data: {

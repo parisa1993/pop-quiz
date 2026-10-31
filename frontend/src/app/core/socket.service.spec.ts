@@ -9,7 +9,10 @@ function fakeIo() {
       handlers.set(event, [...(handlers.get(event) ?? []), handler]);
     }),
     off: vi.fn((event: string, handler: (value: unknown) => void) => {
-      handlers.set(event, (handlers.get(event) ?? []).filter((h) => h !== handler));
+      handlers.set(
+        event,
+        (handlers.get(event) ?? []).filter((h) => h !== handler),
+      );
     }),
     disconnect: vi.fn(),
     timeout: vi.fn(() => socket),
@@ -61,7 +64,10 @@ describe('SocketService', () => {
   it('emits with acknowledgement and handles timeouts', async () => {
     expect(await service.emit('x', {})).toEqual({ ok: true, data: 42 });
     sockets[0].emitWithAck.mockRejectedValueOnce(new Error('timeout'));
-    expect(await service.emit('x', {})).toEqual({ ok: false, error: 'Connection hiccup, please try again' });
+    expect(await service.emit('x', {})).toEqual({
+      ok: false,
+      error: 'Connection hiccup, please try again',
+    });
   });
 
   it('disconnects cleanly', () => {

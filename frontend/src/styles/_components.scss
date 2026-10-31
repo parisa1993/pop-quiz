@@ -4,7 +4,8 @@
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: calc(var(--space-4) + var(--safe-top)) var(--space-4) calc(var(--space-6) + var(--safe-bottom));
+  padding: calc(var(--space-4) + var(--safe-top)) var(--space-4)
+    calc(var(--space-6) + var(--safe-bottom));
 }
 
 .page--narrow {
@@ -15,7 +16,8 @@
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: calc(var(--space-4) + var(--safe-top)) var(--space-4) calc(var(--space-4) + var(--safe-bottom));
+  padding: calc(var(--space-4) + var(--safe-top)) var(--space-4)
+    calc(var(--space-4) + var(--safe-bottom));
 }
 
 // ---------- Cards ----------

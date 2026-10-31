@@ -18,7 +18,10 @@ export class GamesController {
 
   @Post(':quizId/join')
   @HttpCode(200)
-  async join(@Param('quizId') quizId: string, @Body() body: JoinGameRequest): Promise<JoinGameResponse> {
+  async join(
+    @Param('quizId') quizId: string,
+    @Body() body: JoinGameRequest,
+  ): Promise<JoinGameResponse> {
     if (typeof body?.playerId !== 'string' || !body.playerId) {
       throw new BadRequestException('Missing player');
     }
