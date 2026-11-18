@@ -248,23 +248,17 @@ export class SessionsService {
     }
     if (ctx.revealedIds.has(current.id))
       throw new ConflictException('Too late, the answer was revealed');
-    if (ctx.answers.some((a) => a.playerId === playerId && a.questionId === questionId)) {
-      throw new ConflictException('You already answered this question');
-    }
     if (!isValidAnswerPayload(current, payload))
       throw new BadRequestException('That answer is not valid');
 
+    // Players may change their mind until the reveal: the latest answer replaces the earlier one.
     const { isCorrect, points } = gradeAnswer(current, payload);
-    try {
-      await this.prisma.answer.create({
-        data: { sessionId, playerId, questionId, payload: payload as object, isCorrect, points },
-      });
-    } catch (error) {
-      if ((error as { code?: string }).code === 'P2002') {
-        throw new ConflictException('You already answered this question');
-      }
-      throw error;
-    }
+    const data = { payload: payload as object, isCorrect, points, answeredAt: new Date() };
+    await this.prisma.answer.upsert({
+      where: { sessionId_playerId_questionId: { sessionId, playerId, questionId } },
+      create: { sessionId, playerId, questionId, ...data },
+      update: data,
+    });
   }
 
   // ---------- Snapshots ----------

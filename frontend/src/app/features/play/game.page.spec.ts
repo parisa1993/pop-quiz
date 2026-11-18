@@ -94,7 +94,32 @@ describe('GamePage', () => {
     });
 
     await push({ status: 'IN_PROGRESS', question: publicChoice, myAnswer: { optionId: 'a' } });
-    expect(el.textContent).toContain('Answer locked in');
+    expect(el.textContent).toContain('Answer saved! You can still change it');
+
+    // An accidental tap can be undone: tapping another answer sends the new choice.
+    const tiles = el.querySelectorAll('.tile') as NodeListOf<HTMLButtonElement>;
+    expect(tiles[1].disabled).toBe(false);
+    tiles[1].click();
+    await flush();
+    expect(socket.emit).toHaveBeenLastCalledWith(ClientEvents.PlayerAnswer, {
+      sessionId: 's1',
+      questionId: 'q2',
+      payload: { optionId: 'b' },
+    });
+  });
+
+  it('locks the answer once the host reveals it', async () => {
+    const { el, push } = await setup();
+    await push({
+      status: 'IN_PROGRESS',
+      question: publicChoice,
+      myAnswer: { optionId: 'a' },
+      revealed: true,
+      correctAnswerText: 'Pink',
+    });
+    const tiles = el.querySelectorAll('.tile') as NodeListOf<HTMLButtonElement>;
+    expect([...tiles].every((t) => t.disabled)).toBe(true);
+    expect(el.textContent).not.toContain('You can still change it');
   });
 
   it('celebrates a correct reveal and shows the answer', async () => {

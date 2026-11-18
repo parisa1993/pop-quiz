@@ -92,14 +92,27 @@ describe('SessionsService', () => {
   });
 
   describe('answers', () => {
-    it('grades and stores the first answer only', async () => {
+    it('lets players change their answer until the reveal, keeping one answer each', async () => {
       const { sessionId, questions, ann } = await startedGame();
+      await service.submitAnswer(sessionId, ann.id, questions[0].id, { value: false });
+      expect(await db.prisma.answer.findFirstOrThrow()).toMatchObject({
+        isCorrect: false,
+        points: 0,
+      });
+
       await service.submitAnswer(sessionId, ann.id, questions[0].id, { value: true });
+      expect(await db.prisma.answer.count()).toBe(1);
+      expect(await db.prisma.answer.findFirstOrThrow()).toMatchObject({
+        payload: { value: true },
+        isCorrect: true,
+        points: 100,
+      });
+
+      await service.reveal(sessionId);
       await expect(
         service.submitAnswer(sessionId, ann.id, questions[0].id, { value: false }),
-      ).rejects.toThrow('You already answered this question');
-      const stored = await db.prisma.answer.findFirstOrThrow();
-      expect(stored).toMatchObject({ isCorrect: true, points: 100 });
+      ).rejects.toThrow('Too late, the answer was revealed');
+      expect(await db.prisma.answer.findFirstOrThrow()).toMatchObject({ isCorrect: true });
     });
 
     it('rejects closed questions, outsiders, bad payloads and revealed questions', async () => {

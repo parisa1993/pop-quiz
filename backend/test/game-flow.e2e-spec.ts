@@ -303,10 +303,16 @@ describe('Pop Quiz full game flow (e2e)', () => {
         questionId: q,
         payload: { value: false },
       }),
-    ).toEqual({
-      ok: false,
-      error: 'You already answered this question',
-    });
+    ).toEqual({ ok: true }); // she changes her mind…
+    const changed = await server.db.prisma.answer.findFirstOrThrow({ where: { sessionId } });
+    expect(changed).toMatchObject({ payload: { value: false }, isCorrect: false });
+    expect(
+      await emitAck(aliceSocket, ClientEvents.PlayerAnswer, {
+        sessionId,
+        questionId: q,
+        payload: { value: true },
+      }),
+    ).toEqual({ ok: true }); // …and back again before the reveal
     expect(
       await emitAck(bobSocket, ClientEvents.PlayerAnswer, {
         sessionId,

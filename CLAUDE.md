@@ -56,7 +56,7 @@ cd frontend && npm run party                          # run on this PC with a te
 - A quiz has at most one active session (`LOBBY` → `IN_PROGRESS` → `FINISHED`). Gamers joining
   create the lobby if there isn't one.
 - Only the host moves forward or back, and reveals answers. Gamers answer the current question
-  only, once, until it's revealed.
+  only, and may change their answer until it's revealed (latest answer wins, one per player).
 - **Flat scoring**: a correct answer earns the question's `points` (default 100). Polls earn 0.
   There is no timer.
 - Editing questions or deleting a quiz is blocked while that quiz is `IN_PROGRESS`.

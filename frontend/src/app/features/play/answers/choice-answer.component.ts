@@ -62,7 +62,10 @@ const TRUE_FALSE: ChoiceOption[] = [
         [disabled]="picked().length === 0"
         (click)="submitMany()"
       >
-        Lock in {{ picked().length || '' }} answer{{ picked().length === 1 ? '' : 's' }} 🔒
+        {{ answer() ? 'Update to' : 'Lock in' }} {{ picked().length || '' }} answer{{
+          picked().length === 1 ? '' : 's'
+        }}
+        {{ answer() ? '✏️' : '🔒' }}
       </button>
     }
   `,

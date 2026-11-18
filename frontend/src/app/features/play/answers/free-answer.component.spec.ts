@@ -54,6 +54,16 @@ describe('FreeAnswerComponent', () => {
     expect(submitted).toHaveBeenCalledWith({ value: 30.5 });
   });
 
+  it('lets the player update a saved answer before the reveal', async () => {
+    const { el, input, type, submit, submitted } = await setup(typed, { text: 'Mylo' }, false);
+    expect(input.value).toBe('Mylo');
+    expect(input.disabled).toBe(false);
+    expect(el.querySelector('button')?.textContent).toContain('Update my answer');
+    await type('Milo');
+    submit();
+    expect(submitted).toHaveBeenCalledWith({ text: 'Milo' });
+  });
+
   it('shows the saved answer read-only', async () => {
     const { input, el, submit, submitted } = await setup(number, { value: 42 }, true);
     expect(input.value).toBe('42');

@@ -283,13 +283,26 @@ describe('40-player birthday party (e2e)', () => {
       );
       expect(progress.distribution.length).toBeGreaterThan(0);
 
-      // Nobody can answer twice, even under load.
-      const again = await emitAck(bots[0].socket, ClientEvents.PlayerAnswer, {
-        sessionId,
-        questionId: question.id,
-        payload: correct,
-      });
-      expect(again).toEqual({ ok: false, error: 'You already answered this question' });
+      // 5 guests change their mind and then switch back: still exactly one answer per player.
+      const changers = bots.slice(20, 25);
+      const intended = (b: Bot) => (answersCorrectly(b.index, qi) ? correct : wrong);
+      const opposite = (b: Bot) => (answersCorrectly(b.index, qi) ? wrong : correct);
+      for (const pick of [opposite, intended]) {
+        const changed = await Promise.all(
+          changers.map((b) =>
+            emitAck(b.socket, ClientEvents.PlayerAnswer, {
+              sessionId,
+              questionId: question.id,
+              payload: pick(b),
+            }),
+          ),
+        );
+        expect(changed.every((a) => a.ok)).toBe(true);
+      }
+      expect(
+        await server.db.prisma.answer.count({ where: { sessionId, questionId: question.id } }),
+      ).toBe(PLAYERS);
+      await host.waitFor((s) => s.currentIndex === qi && s.answeredCount === PLAYERS);
 
       // Halfway through, 10 guests lose connection and come back on a new socket.
       if (qi === 3) {

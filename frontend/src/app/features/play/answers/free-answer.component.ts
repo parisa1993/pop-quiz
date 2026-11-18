@@ -38,7 +38,7 @@ import type { AnswerPayload, PublicQuestion } from '@pop-quiz/shared';
       </div>
       @if (!locked()) {
         <button class="btn btn--yellow btn--lg btn--block" [disabled]="!valid()">
-          Lock it in 🔒
+          {{ answer() ? 'Update my answer ✏️' : 'Lock it in 🔒' }}
         </button>
       }
     </form>

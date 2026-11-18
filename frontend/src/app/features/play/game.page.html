@@ -93,7 +93,7 @@
                   <app-ordering-answer
                     [question]="q"
                     [answer]="s.myAnswer"
-                    [locked]="!!s.myAnswer || s.revealed || sending()"
+                    [locked]="s.revealed"
                     (submitted)="submit($event)"
                   />
                 }
@@ -101,7 +101,7 @@
                   <app-free-answer
                     [question]="q"
                     [answer]="s.myAnswer"
-                    [locked]="!!s.myAnswer || s.revealed || sending()"
+                    [locked]="s.revealed"
                     (submitted)="submit($event)"
                   />
                 }
@@ -109,7 +109,7 @@
                   <app-choice-answer
                     [question]="q"
                     [answer]="s.myAnswer"
-                    [locked]="!!s.myAnswer || s.revealed || sending()"
+                    [locked]="s.revealed"
                     (submitted)="submit($event)"
                   />
                 }
@@ -117,7 +117,9 @@
             </div>
 
             @if (s.myAnswer && !s.revealed) {
-              <p class="locked pop-in">✨ Answer locked in! Waiting for the host…</p>
+              <p class="locked pop-in">
+                ✨ Answer saved! You can still change it until the host reveals it or moves on.
+              </p>
             }
           </section>
         }

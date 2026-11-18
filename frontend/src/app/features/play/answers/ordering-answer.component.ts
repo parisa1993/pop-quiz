@@ -61,7 +61,7 @@ import type { AnswerPayload, OrderItem, PublicQuestion } from '@pop-quiz/shared'
     </ol>
     @if (!locked()) {
       <button type="button" class="btn btn--yellow btn--lg btn--block" (click)="submit()">
-        Lock in my order 🔒
+        {{ answer() ? 'Update my order ✏️' : 'Lock in my order 🔒' }}
       </button>
     }
   `,

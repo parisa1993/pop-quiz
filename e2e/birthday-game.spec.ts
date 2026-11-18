@@ -140,7 +140,7 @@ test('admin builds a quiz and two gamers play it live from their phones', async 
   await shot(ana, '08-phone-type-answer');
   await ana.getByLabel('Your answer').fill('miso!');
   await ana.getByRole('button', { name: /Lock it in/ }).click();
-  await expect(ana.getByText('Answer locked in')).toBeVisible();
+  await expect(ana.getByText('Answer saved! You can still change it')).toBeVisible();
   await ben.getByLabel('Your answer').fill('Tom');
   await ben.getByRole('button', { name: /Lock it in/ }).click();
   await expect(admin.getByText('2 / 2 answered')).toBeVisible();
