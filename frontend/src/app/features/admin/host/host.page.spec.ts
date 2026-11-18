@@ -109,6 +109,31 @@ describe('HostPage', () => {
     expect(socket.emit).toHaveBeenCalledWith(ClientEvents.AdminPrev, { sessionId: 's1' });
   });
 
+  it('lists players by points, highest first', async () => {
+    const { el, push } = await setup();
+    const player = (id: string, username: string, score: number) => ({
+      id,
+      username,
+      score,
+      connected: true,
+      answeredCurrent: false,
+    });
+    await push(
+      live({
+        players: [player('p1', 'Ana', 100), player('p2', 'Ben', 300), player('p3', 'Cy', 100)],
+      }),
+    );
+    const rows = [...el.querySelectorAll('.players li')].map((li) => [
+      li.querySelector('.players__name')?.textContent,
+      li.querySelector('.players__score')?.textContent,
+    ]);
+    expect(rows).toEqual([
+      ['Ben', '300'],
+      ['Ana', '100'],
+      ['Cy', '100'],
+    ]);
+  });
+
   it('finishes from the last question after confirming', async () => {
     const { el, push, click } = await setup();
     await push(live({ currentIndex: 1 }));

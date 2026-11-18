@@ -112,7 +112,7 @@
               <div class="glass side-card">
                 <h3>{{ s.answeredCount }} / {{ s.players.length }} answered</h3>
                 <ul class="players">
-                  @for (p of s.players; track p.id) {
+                  @for (p of playersByScore(); track p.id) {
                     <li [class.is-off]="!p.connected">
                       <span>{{ p.answeredCurrent ? '✅' : '⏳' }}</span>
                       <span class="players__name">{{ p.username }}</span>

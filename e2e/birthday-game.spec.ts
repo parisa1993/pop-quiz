@@ -70,7 +70,7 @@ test('admin builds a quiz and two gamers play it live from their phones', async 
   await sheet.getByLabel('Question', { exact: true }).fill('Cake is the best dessert');
   await sheet.getByRole('button', { name: '✔ True' }).click();
   await sheet.getByRole('button', { name: 'Add question' }).click();
-  await expect(admin.getByText('Question added')).toBeVisible();
+  await expect(admin.getByText('Question added').last()).toBeVisible();
 
   // Q: multiple choice — saving without a text shows friendly errors first
   await admin.getByRole('button', { name: /Add question/ }).click();
@@ -83,7 +83,7 @@ test('admin builds a quiz and two gamers play it live from their phones', async 
   }
   await sheet.getByRole('radio').nth(2).check();
   await sheet.getByRole('button', { name: 'Add question' }).click();
-  await expect(admin.getByText('Question added')).toBeVisible();
+  await expect(admin.getByText('Question added').last()).toBeVisible();
 
   // Q: type the answer
   await admin.getByRole('button', { name: /Add question/ }).click();

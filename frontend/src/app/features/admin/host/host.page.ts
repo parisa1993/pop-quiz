@@ -57,6 +57,12 @@ export class HostPage implements OnInit {
   protected readonly rankLabel = rankLabel;
   protected readonly joinUrl = `${location.origin}`;
 
+  /** Players with the most points first (ties by name), for the live side panel. */
+  protected readonly playersByScore = computed(() =>
+    [...(this.state()?.players ?? [])].sort(
+      (a, b) => b.score - a.score || a.username.localeCompare(b.username),
+    ),
+  );
   protected readonly onlineCount = computed(
     () => this.state()?.players.filter((p) => p.connected).length ?? 0,
   );
