@@ -13,7 +13,9 @@
     "fe": "npm start",
     "be": "npm --prefix ../shared run build && npm --prefix ../backend run start:dev",
     "dev": "npm --prefix .. run dev",
-    "dev:lan": "npm --prefix .. run dev:lan"
+    "dev:lan": "npm --prefix .. run dev:lan",
+    "party": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/start-party.ps1",
+    "party:quick": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/start-party.ps1 -SkipBuild"
   },
   "dependencies": {
     "@angular/cdk": "^22.2.5",

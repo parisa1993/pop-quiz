@@ -51,3 +51,4 @@ backend/test/tmp/
 .env
 test-results/
 playwright-report/
+logs/
