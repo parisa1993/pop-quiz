@@ -1,0 +1,13 @@
+.git
+**/node_modules
+**/dist
+**/.angular
+**/coverage
+logs
+test-results
+playwright-report
+backend/prisma/*.db*
+backend/uploads
+backend/src/generated
+.env
+**/.env

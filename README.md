@@ -122,3 +122,26 @@ cd backend && npm run start:prod
 
 The backend serves the built Angular app, the API (`/api`), uploaded pictures (`/uploads`) and
 Socket.IO on a single port.
+
+## Deploying to Railway
+
+The repo has a `Dockerfile` that builds everything into one container. Data lives on a volume
+mounted at `/data` (`DATABASE_URL=file:/data/pop-quiz.db`, `UPLOADS_DIR=/data/uploads`).
+
+```bash
+npm install -g @railway/cli --allow-scripts=@railway/cli
+railway login
+railway up --ci          # from the repo root: upload, build and deploy
+railway logs             # see what the server is doing
+railway variables --set "ADMIN_PASSWORD=<pin>"   # change the admin PIN (redeploys)
+```
+
+Live: <https://chiara-pop-quiz-production.up.railway.app>
+
+To back up the data before deleting the project:
+`railway volume files download pop-quiz.db` (and `uploads/` for pictures).
+
+## Party mode from your own PC
+
+`npm run party` in `frontend/` (or double-click `scripts/start-party.cmd`) builds the app, starts
+it and shares it through a free Cloudflare link that changes on every run.
