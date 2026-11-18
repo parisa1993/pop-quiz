@@ -107,10 +107,12 @@ describe('GamePage', () => {
       revealed: true,
       myResult: { isCorrect: true, points: 200 },
       correctAnswerText: 'Pink',
+      funFact: 'Pink was her first car colour.',
       myScore: 200,
     });
     expect(el.textContent).toContain('Correct! +200 pts');
     expect(el.textContent).toContain('Pink');
+    expect(el.querySelector('.fun-fact')?.textContent).toContain('Pink was her first car colour.');
     expect(notify.celebrate).toHaveBeenCalled();
   });
 

@@ -319,6 +319,7 @@ export class SessionsService {
       myResult:
         revealed && myAnswer ? { isCorrect: myAnswer.isCorrect, points: myAnswer.points } : null,
       correctAnswerText: revealed && question ? describeCorrectAnswer(question) : null,
+      funFact: revealed && question ? (question.funFact ?? null) : null,
       myScore: me?.score ?? 0,
       final:
         finished && me

@@ -95,6 +95,11 @@
                   <p class="answer pop-in">
                     Answer: <b>{{ s.correctAnswerText }}</b>
                   </p>
+                  @if (q.funFact) {
+                    <p class="fun-fact pop-in">
+                      <span aria-hidden="true">💡</span> {{ q.funFact }}
+                    </p>
+                  }
                 } @else {
                   <p class="muted answer-hidden">
                     🔒 Answer: {{ s.correctAnswerText }} (only you can see this)

@@ -81,6 +81,9 @@
                     >Answer: <b>{{ s.correctAnswerText }}</b></span
                   >
                 }
+                @if (s.funFact) {
+                  <p class="fun-fact"><span aria-hidden="true">💡</span> {{ s.funFact }}</p>
+                }
               </div>
             }
 

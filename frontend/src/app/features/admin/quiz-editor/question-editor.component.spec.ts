@@ -83,6 +83,7 @@ describe('QuestionEditorComponent', () => {
       imageUrl: null,
       points: 500,
       config: { correct: false },
+      funFact: null,
     });
   });
 
@@ -126,6 +127,15 @@ describe('QuestionEditorComponent', () => {
         config: expect.objectContaining({ correctOptionIds: ['a'] }),
       }),
     );
+  });
+
+  it('saves an optional fun fact', async () => {
+    await setup();
+    await pickType('True / False');
+    await type('textarea', 'Sky is blue');
+    await type('textarea', '  Light scatters!  ', 1);
+    await save();
+    expect(saved).toHaveBeenCalledWith(expect.objectContaining({ funFact: 'Light scatters!' }));
   });
 
   it('edits an existing question', async () => {

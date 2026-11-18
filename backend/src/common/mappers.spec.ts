@@ -11,6 +11,7 @@ describe('mappers', () => {
       imageUrl: null,
       points: 50,
       config: { correct: true },
+      funFact: 'Blue light scatters most.',
     };
     expect(toQuestion(row)).toEqual(row);
   });

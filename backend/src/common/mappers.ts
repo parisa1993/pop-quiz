@@ -11,6 +11,7 @@ export function toQuestion(row: QuestionRow): Question {
     imageUrl: row.imageUrl,
     points: row.points,
     config: row.config,
+    funFact: row.funFact,
   } as unknown as Question;
 }
 

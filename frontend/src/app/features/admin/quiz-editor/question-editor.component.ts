@@ -37,6 +37,7 @@ interface Draft {
   imageUrl: string | null;
   points: number;
   config: QuestionConfig;
+  funFact: string;
 }
 
 type Loose = Record<string, unknown>;
@@ -51,6 +52,7 @@ function toDraft(question: Question | null): Draft {
       imageUrl: null,
       points: DEFAULT_POINTS,
       config: createDefaultConfig('SINGLE_CHOICE'),
+      funFact: '',
     };
   }
   return {
@@ -59,6 +61,7 @@ function toDraft(question: Question | null): Draft {
     imageUrl: question.imageUrl ?? null,
     points: question.points,
     config: structuredClone(question.config),
+    funFact: question.funFact ?? '',
   };
 }
 

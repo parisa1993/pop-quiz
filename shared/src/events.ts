@@ -68,6 +68,8 @@ export interface PlayerGameState {
   /** Only present after the host reveals the answer. */
   myResult: GradeResult | null;
   correctAnswerText: string | null;
+  /** The question's fun fact, only after the host reveals the answer. */
+  funFact: string | null;
   /** Points from questions whose answers have been revealed. */
   myScore: number;
   final: FinalResult | null;

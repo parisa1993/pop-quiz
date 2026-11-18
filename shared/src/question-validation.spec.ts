@@ -40,7 +40,23 @@ describe('validateQuestionInput', () => {
           ],
           correctOptionId: 'a',
         },
+        funFact: null,
       },
+    });
+  });
+
+  it('trims an optional fun fact and limits its length', () => {
+    const base = { type: 'TRUE_FALSE', text: 'Q', config: { correct: true } };
+    expect(validateQuestionInput({ ...base, funFact: '  Built with wine!  ' })).toMatchObject({
+      valid: true,
+      value: { funFact: 'Built with wine!' },
+    });
+    expect(validateQuestionInput({ ...base, funFact: '   ' })).toMatchObject({
+      value: { funFact: null },
+    });
+    expect(validateQuestionInput({ ...base, funFact: 'x'.repeat(501) })).toEqual({
+      valid: false,
+      errors: ['Fun fact is too long (max 500 characters)'],
     });
   });
 

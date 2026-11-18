@@ -150,6 +150,7 @@ export function playerState(overrides: Partial<PlayerGameState> = {}): PlayerGam
     myAnswer: null,
     myResult: null,
     correctAnswerText: null,
+    funFact: null,
     myScore: 0,
     final: null,
     ...overrides,

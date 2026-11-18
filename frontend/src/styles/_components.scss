@@ -493,3 +493,16 @@ textarea.input {
   background: none;
   line-height: 1;
 }
+
+// ---------- Fun fact (shown on reveal) ----------
+.fun-fact {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-m);
+  border-left: 5px solid var(--c-yellow);
+  background: #fff8e1;
+  color: var(--c-ink);
+  font-size: var(--fs-m);
+  font-weight: 600;
+  line-height: 1.45;
+}

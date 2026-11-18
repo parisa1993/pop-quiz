@@ -98,6 +98,8 @@ export type QuestionInput = {
     imageUrl?: string | null;
     points: number;
     config: QuestionConfigMap[T];
+    /** Optional fun fact, only shown once the host reveals the answer. */
+    funFact?: string | null;
   };
 }[QuestionType];
 
@@ -139,6 +141,7 @@ export const QUESTION_TYPE_INFO: Record<
 };
 
 export const DEFAULT_POINTS = 100;
+export const MAX_FUN_FACT = 500;
 export const MIN_OPTIONS = 2;
 export const MAX_OPTIONS = 6;
 export const MIN_ORDER_ITEMS = 3;

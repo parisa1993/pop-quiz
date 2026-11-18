@@ -3,6 +3,7 @@ import {
   ChoiceOption,
   DEFAULT_POINTS,
   isQuestionType,
+  MAX_FUN_FACT,
   MAX_OPTIONS,
   MAX_ORDER_ITEMS,
   MIN_OPTIONS,
@@ -146,12 +147,16 @@ export function validateQuestionInput(input: unknown): ValidationResult {
   }
 
   const imageUrl = isNonEmptyString(input['imageUrl']) ? input['imageUrl'] : null;
+  const funFact = typeof input['funFact'] === 'string' ? input['funFact'].trim() || null : null;
+  if (funFact && funFact.length > MAX_FUN_FACT) {
+    errors.push(`Fun fact is too long (max ${MAX_FUN_FACT} characters)`);
+  }
   const config = readConfig(type, input['config'], errors);
 
   if (errors.length) return { valid: false, errors };
   return {
     valid: true,
-    value: { type, text, imageUrl, points: Number(points), config } as QuestionInput,
+    value: { type, text, imageUrl, points: Number(points), config, funFact } as QuestionInput,
   };
 }
 

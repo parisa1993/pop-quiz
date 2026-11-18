@@ -167,6 +167,27 @@ describe('SessionsService', () => {
       expect(benView.final).toMatchObject({ rank: 2, score: 0, playerCount: 2 });
     });
 
+    it('only shows the fun fact after the reveal', async () => {
+      const { sessionId, questions, ann } = await startedGame();
+      await db.prisma.question.update({
+        where: { id: questions[0].id },
+        data: { funFact: 'Cake was invented in Egypt.' },
+      });
+      let ctx = (await service.loadContext(sessionId))!;
+      const before = service.buildPlayerState(ctx, ann.id, new Set());
+      expect(before.funFact).toBeNull();
+      expect(JSON.stringify(before.question)).not.toContain('Egypt');
+
+      await service.reveal(sessionId);
+      ctx = (await service.loadContext(sessionId))!;
+      expect(service.buildPlayerState(ctx, ann.id, new Set()).funFact).toBe(
+        'Cake was invented in Egypt.',
+      );
+      expect(service.buildHostState(ctx, new Set()).question?.funFact).toBe(
+        'Cake was invented in Egypt.',
+      );
+    });
+
     it('lists and summarizes sessions', async () => {
       const { quiz, sessionId } = await startedGame();
       const sessions = await service.listSessions(quiz.id);

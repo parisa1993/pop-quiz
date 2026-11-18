@@ -175,13 +175,14 @@ export class QuizEditorPage implements OnInit {
     const quiz = this.quiz();
     if (!quiz) return;
     try {
-      const { type, text, imageUrl, points, config } = question;
+      const { type, text, imageUrl, points, config, funFact } = question;
       const copy = await this.api.createQuestion(quiz.id, {
         type,
         text: `${text} (copy)`.slice(0, 500),
         imageUrl,
         points,
         config,
+        funFact,
       } as QuestionInput);
       this.setQuestions([...quiz.questions, copy]);
       this.toast.success('Question duplicated');

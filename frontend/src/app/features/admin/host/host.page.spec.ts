@@ -95,8 +95,12 @@ describe('HostPage', () => {
 
     await click('Reveal answer');
     expect(socket.emit).toHaveBeenCalledWith(ClientEvents.AdminReveal, { sessionId: 's1' });
-    await push(live({ revealed: true }));
+    expect(el.querySelector('.fun-fact')).toBeNull();
+    await push(
+      live({ revealed: true, question: { ...choiceQuestion, funFact: 'Pink is her colour.' } }),
+    );
     expect(el.querySelector('.answer')?.textContent).toContain('Pink');
+    expect(el.querySelector('.fun-fact')?.textContent).toContain('Pink is her colour.');
 
     await click('Next');
     expect(socket.emit).toHaveBeenCalledWith(ClientEvents.AdminNext, { sessionId: 's1' });

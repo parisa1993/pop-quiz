@@ -68,6 +68,18 @@
     }
   </div>
 
+  <label class="field">
+    <span>Fun fact (optional, shown to everyone when you reveal the answer)</span>
+    <textarea
+      class="input"
+      rows="2"
+      maxlength="500"
+      placeholder="e.g. This happens at the Sourdough Saloon in Dawson City, Yukon."
+      [value]="draft().funFact"
+      (input)="patch({ funFact: $any($event.target).value })"
+    ></textarea>
+  </label>
+
   <section class="answers">
     <h3 class="editor__label">Answers</h3>
     @if (isChoice()) {
