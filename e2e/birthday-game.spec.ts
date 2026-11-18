@@ -175,6 +175,9 @@ test('admin builds a quiz and two gamers play it live from their phones', async 
   await expect(ben.getByText('Question 3 / 3')).toBeVisible();
   await shot(ana, '12-phone-choice');
   await ana.getByRole('button', { name: /Gold/ }).click();
+  await expect(ana.getByRole('button', { name: /Gold/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(ana.getByText('✓ Your answer')).toBeVisible();
+  await shot(ana, '12b-phone-picked');
   await ben.getByRole('button', { name: /Pink/ }).click();
   await admin.getByRole('button', { name: /Reveal answer/ }).click();
   await admin.getByRole('button', { name: /Finish & show winners/ }).click();

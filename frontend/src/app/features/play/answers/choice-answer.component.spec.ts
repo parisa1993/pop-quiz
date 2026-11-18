@@ -34,6 +34,33 @@ describe('ChoiceAnswerComponent', () => {
     expect(submitted).toHaveBeenCalledWith({ value: false });
   });
 
+  it('clearly marks the picked answer while it can still be changed', async () => {
+    const twoOptions: PublicQuestion = {
+      ...publicChoice,
+      config: {
+        options: [
+          { id: 't', text: 'Tyrolean' },
+          { id: 'v', text: 'Viennese' },
+        ],
+      },
+    };
+    const { tiles, fixture } = await setup(twoOptions, { optionId: 'v' }, false);
+    const [tyrolean, viennese] = tiles();
+    expect(viennese.classList).toContain('is-picked');
+    expect(viennese.getAttribute('aria-pressed')).toBe('true');
+    expect(viennese.querySelector('.tile__picked')?.textContent).toContain('Your answer');
+    expect(tyrolean.classList).toContain('is-dimmed');
+    expect(tyrolean.disabled).toBe(false);
+    expect(tyrolean.querySelector('.tile__picked')).toBeNull();
+
+    // Switching moves the marker.
+    tyrolean.click();
+    await fixture.whenStable();
+    expect(tyrolean.classList).toContain('is-picked');
+    expect(tyrolean.querySelector('.tile__picked')).not.toBeNull();
+    expect(viennese.classList).toContain('is-dimmed');
+  });
+
   it('collects several picks for multi-select', async () => {
     const { tiles, el, fixture, submitted } = await setup({
       ...publicChoice,

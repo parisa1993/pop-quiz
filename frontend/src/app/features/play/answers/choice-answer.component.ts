@@ -30,7 +30,7 @@ const TRUE_FALSE: ChoiceOption[] = [
           type="button"
           class="tile"
           [class.is-picked]="picked().includes(option.id)"
-          [class.is-dimmed]="locked() && !picked().includes(option.id)"
+          [class.is-dimmed]="fadeOthers() && !picked().includes(option.id)"
           [style.--tile]="style(i).color"
           [disabled]="locked()"
           [attr.aria-pressed]="picked().includes(option.id)"
@@ -42,6 +42,9 @@ const TRUE_FALSE: ChoiceOption[] = [
               [alt]="option.text || 'Picture ' + (i + 1)"
               class="tile__img"
             />
+          }
+          @if (!multiple() && picked().includes(option.id)) {
+            <span class="tile__picked">✓ Your answer</span>
           }
           <span class="tile__label">
             <span class="shape" aria-hidden="true">{{ style(i).shape }}</span>
@@ -129,13 +132,34 @@ const TRUE_FALSE: ChoiceOption[] = [
       font-size: 1rem;
     }
     .is-picked {
-      outline: 4px solid #fff;
-      outline-offset: -4px;
-      transform: scale(1.02);
+      z-index: 1;
+      outline: 5px solid #fff;
+      outline-offset: -5px;
+      transform: scale(1.04);
+      box-shadow:
+        0 0 0 4px var(--c-ink),
+        0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+    .tile__picked {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      padding: 2px var(--space-3);
+      border-radius: var(--radius-pill);
+      background: #fff;
+      color: var(--c-ink);
+      font-family: var(--font-body);
+      font-size: var(--fs-s);
+      font-weight: 800;
+      box-shadow: var(--shadow-s);
+      animation: pop-in 260ms var(--ease-bounce) both;
     }
     .is-dimmed {
-      opacity: 0.35;
-      filter: saturate(0.4);
+      opacity: 0.4;
+      filter: saturate(0.35);
+    }
+    .is-dimmed:not(:disabled):hover {
+      opacity: 0.7;
     }
     .submit {
       margin-top: var(--space-4);
@@ -151,6 +175,10 @@ export class ChoiceAnswerComponent {
   protected readonly style = answerStyle;
   protected readonly isImage = computed(() => this.question().type === 'IMAGE_CHOICE');
   protected readonly multiple = computed(() => this.question().type === 'MULTIPLE_CHOICE');
+  /** Fade the other tiles once a one-answer pick is made (they stay tappable to switch). */
+  protected readonly fadeOthers = computed(
+    () => this.locked() || (!this.multiple() && this.picked().length > 0),
+  );
   protected readonly options = computed(() =>
     this.question().type === 'TRUE_FALSE' ? TRUE_FALSE : (this.question().config.options ?? []),
   );
