@@ -40,8 +40,8 @@ e2e/        Playwright full-game test
 npm run dev            # backend :3000 + frontend :4200 (proxy for /api, /uploads, /socket.io)
 npm run dev:lan        # same, reachable from phones on the Wi-Fi
 npm test               # shared + backend + frontend unit tests
-npm run test:e2e       # backend HTTP + socket game-flow test
-npm run e2e            # build + Playwright (E2E_SCREENSHOTS=1 saves screens)
+npm run test:e2e       # backend game-flow tests, incl. a 40-player party (party-40-players)
+npm run e2e            # build + Playwright: full game + 40-player party (E2E_SCREENSHOTS=1)
 npm run build
 cd backend && npx prisma migrate dev --name <change>   # after editing schema.prisma
 cd frontend && npm run deploy                         # tests + deploy to the linked Railway project

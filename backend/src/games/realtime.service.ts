@@ -15,6 +15,8 @@ export const sessionRoom = (sessionId: string) => `session:${sessionId}`;
 @Injectable()
 export class RealtimeService {
   private server: Server | null = null;
+  private readonly running = new Map<string, Promise<void>>();
+  private readonly pending = new Set<string>();
 
   constructor(private readonly sessions: SessionsService) {}
 
@@ -22,7 +24,28 @@ export class RealtimeService {
     this.server = server;
   }
 
-  async broadcastSession(sessionId: string): Promise<void> {
+  /**
+   * Sends fresh snapshots. When 40 players answer at once, calls that arrive while a broadcast is
+   * running are combined into one follow-up broadcast of the latest state, so the server doesn't
+   * send 40 near-identical rounds. The returned promise resolves once the newest state was sent.
+   */
+  broadcastSession(sessionId: string): Promise<void> {
+    const inFlight = this.running.get(sessionId);
+    if (inFlight) {
+      this.pending.add(sessionId);
+      return inFlight;
+    }
+    const run = (async () => {
+      do {
+        this.pending.delete(sessionId);
+        await this.sendSnapshots(sessionId);
+      } while (this.pending.has(sessionId));
+    })().finally(() => this.running.delete(sessionId));
+    this.running.set(sessionId, run);
+    return run;
+  }
+
+  private async sendSnapshots(sessionId: string): Promise<void> {
     if (!this.server) return;
     const ctx = await this.sessions.loadContext(sessionId);
     if (!ctx) return;

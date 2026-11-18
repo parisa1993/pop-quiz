@@ -47,4 +47,32 @@ describe('RealtimeService', () => {
     service.gamesChanged();
     expect(server.emit).toHaveBeenCalledWith(ServerEvents.GamesChanged);
   });
+
+  it('combines a burst of updates into one follow-up broadcast of the latest state', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    const loads: number[] = [];
+    const slowSessions = {
+      ...sessions,
+      loadContext: vi.fn(async () => {
+        loads.push(loads.length + 1);
+        if (loads.length === 1) await gate; // the first broadcast is still running…
+        return ctx;
+      }),
+    } as unknown as SessionsService;
+    const service = new RealtimeService(slowSessions);
+    service.attach(server);
+
+    const first = service.broadcastSession('s1');
+    // …while 5 more answers arrive.
+    const burst = Array.from({ length: 5 }, () => service.broadcastSession('s1'));
+    release();
+    await Promise.all([first, ...burst]);
+
+    expect(slowSessions.loadContext).toHaveBeenCalledTimes(2);
+
+    // Once idle, the next update broadcasts straight away again.
+    await service.broadcastSession('s1');
+    expect(slowSessions.loadContext).toHaveBeenCalledTimes(3);
+  });
 });
