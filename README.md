@@ -136,7 +136,7 @@ railway logs             # see what the server is doing
 railway variables --set "ADMIN_PASSWORD=<pin>"   # change the admin PIN (redeploys)
 ```
 
-Live: <https://chiara-pop-quiz-production.up.railway.app>
+Deploy updates with `npm run deploy` (or `npm run deploy:quick` to skip tests) from `frontend/`. Data on the volume is never replaced by a deploy, the server backs up the database to `/data/backups/` on every start, and the deploy script also downloads a copy to `backups/` on your PC first.
 
 To back up the data before deleting the project:
 `railway volume files download pop-quiz.db` (and `uploads/` for pictures).

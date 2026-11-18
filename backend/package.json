@@ -7,7 +7,7 @@
     "build": "prisma generate && nest build",
     "start": "nest start",
     "start:dev": "prisma generate && prisma migrate deploy && nest start --watch",
-    "start:prod": "prisma migrate deploy && node dist/src/main",
+    "start:prod": "node dist/src/backup.js && prisma migrate deploy && node dist/src/main",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "test": "prisma generate && vitest run",

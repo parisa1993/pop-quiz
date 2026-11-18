@@ -52,3 +52,5 @@ backend/test/tmp/
 test-results/
 playwright-report/
 logs/
+backend/prisma/backups/
+backups/

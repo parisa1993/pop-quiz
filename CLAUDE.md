@@ -44,6 +44,8 @@ npm run test:e2e       # backend HTTP + socket game-flow test
 npm run e2e            # build + Playwright (E2E_SCREENSHOTS=1 saves screens)
 npm run build
 cd backend && npx prisma migrate dev --name <change>   # after editing schema.prisma
+cd frontend && npm run deploy                         # tests + deploy to the linked Railway project
+cd frontend && npm run party                          # run on this PC with a temporary public link
 ```
 
 ## Domain rules
@@ -95,6 +97,14 @@ cd backend && npx prisma migrate dev --name <change>   # after editing schema.pr
 - **Every source file gets a matching `*.spec.ts`.**
 - Before calling work done, run `npm test`, `npm run test:e2e` and `npm run build`. Run
   `npm run e2e` for UI changes.
+
+## Deployment & data safety
+
+- Railway builds the root `Dockerfile`. All data lives on the volume at `/data`; deploys never
+  touch it. `start:prod` runs `backup.js` (copies the DB to `/data/backups`, keeps 10) before
+  `prisma migrate deploy`. Never add a migration that drops or resets data.
+- Keep personal info out of the repo: no URLs, project IDs, PINs or secrets in scripts or docs.
+  Secrets live in Railway variables; scripts read the project and domain from `railway link`.
 
 ## Gotchas
 
